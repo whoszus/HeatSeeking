@@ -16,6 +16,6 @@ public class Authentication {
     @RequestMapping("/verification.do")
     public String authentication(){
 
-        return new Gson().toJson("{ret:0,msg:'验证通过'}");
+        return new Gson().toJson("{ret:0,msg:'已发送协议。'}");
     }
 }
