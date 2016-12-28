@@ -314,7 +314,7 @@ public class DateTimeUtils {
 	/**
 	 * 根据日历返回日期时间
 	 * 
-	 * @param Calendar
+	 * @param calendar
 	 *            日历
 	 * @return String YYYY-MM-DD HH:MM:DD
 	 */
@@ -374,7 +374,7 @@ public class DateTimeUtils {
 	/**
 	 * 在指定的日期中按某个时间类型添加指定步长
 	 * 
-	 * @param datetime
+	 * @param date
 	 *            YYYY-MM-DD HH:MM:SS
 	 * @param type
 	 *            YEAR,MONTH,DAY,HOUR,MINUTE,SECOND
@@ -449,8 +449,6 @@ public class DateTimeUtils {
 	/**
 	 * 获得当前日期的某一部分
 	 * 
-	 * @param datetime
-	 *            String yyyy-MM-dd HH:mm:ss的格式
 	 * @param part
 	 *            int 日期部分 例如：DateUtil.YEAR,DateUtil.MONTH等
 	 * @return int

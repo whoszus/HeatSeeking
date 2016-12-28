@@ -148,12 +148,12 @@ public class LogAop {
     //判断是否已经登录
     private boolean isLogin(HttpServletRequest request) {
         return true;
-        /*String token = XWebUtils.getCookieByName(request, WebConstants.CookieName.AdminToken);
-        if("1".equals(redisOperator.get(RedisConstants.Prefix.ADMIN_TOKEN+token))){
-            return true;
-        }else {
-            return false;
-        }*/
+//        String token = XWebUtils.getCookieByName(request, WebConstants.CookieName.AdminToken);
+//        if("1".equals(redisOperator.get(RedisConstants.Prefix.ADMIN_TOKEN+token))){
+//            return true;
+//        }else {
+//            return false;
+//        }
     }
 
 
