@@ -1,5 +1,7 @@
 package cc.tinker.entity;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,20 +10,21 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "hs_token", schema = "heatseeking")
+@Where(clause = "isEffective =1")
 public class TokenEntity {
-    private String tokern;
+    private String token;
 //    @Pattern("yyyy-MM-dd hh:mm:ss")
     private Date activeTime;
     private Integer isEffective;
 
     @Id
-    @Column(name = "TOKERN")
+    @Column(name = "token")
     public String getTokern() {
-        return tokern;
+        return token;
     }
 
-    public void setTokern(String tokern) {
-        this.tokern = tokern;
+    public void setTokern(String token) {
+        this.token = token;
     }
 
     @Basic
@@ -51,7 +54,7 @@ public class TokenEntity {
 
         TokenEntity that = (TokenEntity) o;
 
-        if (tokern != null ? !tokern.equals(that.tokern) : that.tokern != null) return false;
+        if (token != null ? !token.equals(that.token) : that.token != null) return false;
         if (activeTime != null ? !activeTime.equals(that.activeTime) : that.activeTime != null) return false;
         if (isEffective != null ? !isEffective.equals(that.isEffective) : that.isEffective != null) return false;
 
@@ -60,7 +63,7 @@ public class TokenEntity {
 
     @Override
     public int hashCode() {
-        int result = tokern != null ? tokern.hashCode() : 0;
+        int result = token != null ? token.hashCode() : 0;
         result = 31 * result + (activeTime != null ? activeTime.hashCode() : 0);
         result = 31 * result + (isEffective != null ? isEffective.hashCode() : 0);
         return result;
