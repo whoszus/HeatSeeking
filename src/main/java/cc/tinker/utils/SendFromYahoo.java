@@ -10,12 +10,6 @@ import javax.mail.internet.*;
 public class SendFromYahoo {
     public static void sendEmailByYahoo(String to,String subject,String content) {
         // Sender's email ID needs to be mentioned
-
-        // Recipient's email ID needs to be mentioned.
-//        String from = "tinkerwebsite@yahoo.com";
-//        String pass ="jump1844";
-//        String host = "smtp.mail.yahoo.com";
-
         String from = "whoszus@126.com";
         String pass = "tinker0000";
         String host = "smtp.126.com";
