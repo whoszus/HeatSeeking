@@ -1,6 +1,6 @@
 # tinker web site index
 ---
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)]()
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)](https://opensource.org/licenses/MIT)
 
 
 
