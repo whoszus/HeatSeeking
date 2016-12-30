@@ -11,6 +11,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface TokenDao extends PagingAndSortingRepository<TokenEntity, Integer>,
         JpaSpecificationExecutor<TokenEntity> {
 
-    @Query("from TokenEntity t where t.token = ?1")
+    @Query("from TokenEntity t ")
     TokenEntity findOneByToken(String token);
 }

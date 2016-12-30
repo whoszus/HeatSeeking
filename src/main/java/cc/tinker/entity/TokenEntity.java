@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Tinker on 2016/12/16.
  */
 @Entity
-@Table(name = "hs_token", schema = "heatseeking")
+@Table(name = "hs_token")
 @Where(clause = "isEffective =1")
 public class TokenEntity {
     private String token;

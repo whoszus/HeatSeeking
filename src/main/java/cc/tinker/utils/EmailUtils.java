@@ -1,11 +1,5 @@
 package cc.tinker.utils;
 
-import com.sun.deploy.association.utility.AppConstants;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;

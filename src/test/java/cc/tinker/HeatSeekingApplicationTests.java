@@ -36,7 +36,7 @@ public class HeatSeekingApplicationTests {
 //			e.printStackTrace();
 //		}
 //	emailUtils.sendMessage();
-		SendFromYahoo.sendEmailByYahoo("yeqinglyy@126.com",new Date().toString(),new Date().toString());
+//		SendFromYahoo.sendEmailByYahoo("yeqinglyy@126.com",new Date().toString(),new Date().toString());
 
 
 
