@@ -95,6 +95,16 @@
 			<!--</plugin>-->
 
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>libs</directory>
+				<targetPath>BOOT-INF/libs/</targetPath>
+				<includes>
+					<include>*.jar</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 

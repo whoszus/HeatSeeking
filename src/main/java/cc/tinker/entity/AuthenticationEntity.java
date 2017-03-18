@@ -17,7 +17,7 @@ public class AuthenticationEntity {
     private String email;
     private String emailVerify;
     private Date registeTime;
-    private Date lastLonginTime;
+    private Date lastLoginTime;
 
     @Id
     @Column(name = "ID")
@@ -101,12 +101,12 @@ public class AuthenticationEntity {
 
     @Basic
     @Column(name = "LAST_LONGIN_TIME")
-    public Date getLastLonginTime() {
-        return lastLonginTime;
+    public Date getLastLoginTime() {
+        return lastLoginTime;
     }
 
-    public void setLastLonginTime(Date lastLonginTime) {
-        this.lastLonginTime = lastLonginTime;
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class AuthenticationEntity {
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
         if (emailVerify != null ? !emailVerify.equals(that.emailVerify) : that.emailVerify != null) return false;
         if (registeTime != null ? !registeTime.equals(that.registeTime) : that.registeTime != null) return false;
-        if (lastLonginTime != null ? !lastLonginTime.equals(that.lastLonginTime) : that.lastLonginTime != null)
+        if (lastLoginTime != null ? !lastLoginTime.equals(that.lastLoginTime) : that.lastLoginTime != null)
             return false;
 
         return true;
@@ -140,7 +140,7 @@ public class AuthenticationEntity {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (emailVerify != null ? emailVerify.hashCode() : 0);
         result = 31 * result + (registeTime != null ? registeTime.hashCode() : 0);
-        result = 31 * result + (lastLonginTime != null ? lastLonginTime.hashCode() : 0);
+        result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
         return result;
     }
 }
