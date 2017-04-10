@@ -56,7 +56,7 @@ public class PassWordMgrController {
                           HttpServletRequest request) {
 
         Map<String, Object> conditions = ServletUtils.getParametersStartingWith(request, "condition_");
-        Page<SiteEncodePasswordEntity> platfroms = siteEncodeService.getSiteBootstrapTable(conditions, pageNumber, pageSize, sortType);
+        Page<SiteEncodePasswordEntity> entityPage = siteEncodeService.getSiteBootstrapTable(conditions, pageNumber, pageSize, sortType);
 
         return null;
 
