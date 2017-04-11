@@ -33,7 +33,7 @@ public class RSAUtils {
      * @return
      * @throws Exception
      */
-    public static Map<String, Object> initKey() throws Exception {
+    public static Map<String, Object> generateKeyPair() throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORTHM);
         keyPairGenerator.initialize(1024);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
