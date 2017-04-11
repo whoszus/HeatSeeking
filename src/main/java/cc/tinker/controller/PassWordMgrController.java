@@ -34,7 +34,7 @@ public class PassWordMgrController {
     public FrontEndResponse encryptPsw(SiteEncodePasswordEntity siteEncode) {
 
 
-        siteEncodeService.encodeAndSaveData(siteEncode);
+        siteEncodeService.encodeAndSavePassword(siteEncode);
         return new FrontEndResponse(true);
     }
 
