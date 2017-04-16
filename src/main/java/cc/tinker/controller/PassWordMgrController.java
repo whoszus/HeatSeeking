@@ -72,4 +72,25 @@ public class PassWordMgrController {
     }
 
 
+    /**
+     * 解密密码；
+     * @param userCookieToken
+     * @param siteEncode
+     * @return
+     */
+    @RequestMapping("/decodePassword")
+    public FrontEndResponse decodePassword(@CookieValue(value = "token", defaultValue = "empty") String userCookieToken, SiteEncodePasswordEntity siteEncode){
+        TokenEntity tokenEntity = authenticationService.isTokenValid(userCookieToken);
+        if(tokenEntity!=null){
+            //获取用户id；
+            return new FrontEndResponse(true,siteEncodeService.decodePassword(siteEncode,tokenEntity.getUserId()));
+        }else{
+            return  new FrontEndResponse(false,"你的token不存在或已超时，请重新登录");
+        }
+
+    }
+
+
+
+
 }

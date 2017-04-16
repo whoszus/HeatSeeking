@@ -42,30 +42,38 @@ public class AuthenticationService {
     @Autowired
     private TokenDao tokenDao;
 
-    public String authentication(String key, String value, String token) {
-//      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
-        if (!token.equals("empty")) {
-            TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
-            if (tokenEntity != null) {
-                if (tokenEntity.getActiveTime().compareTo(new Date()) != -1) {
+    /**
+     *  验证用户名密码；
+     * @param key
+     * @param value
+     * @param token
+     * @return
+     */
+    public boolean authentication(String key, String value, String token) {
+        AuthenticationEntity authenticationEntity = authenticationDao.authByNameAndPsw(key,value);
+        if(authenticationEntity!=null){
+            //      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
+            if (!token.equals("")) {
+                TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
+                if (tokenEntity != null) {
                     tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(), 20));
                     tokenEntity.setIsEffective(1);
                     tokenDao.save(tokenEntity);
-                    return token;
-                } else {
-                    tokenEntity.setIsEffective(0);
+                    return true;
                 }
             }
         }
 
-        return generateNewToken(authDB.getId());
+
+        return false;
     }
 
 
     public String register(AuthenticationEntity auth) {
+
         AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
-        auth.setToken(generateNewToken(authenticationEntity.getId()));
-        return auth.getToken();
+        String newToken  = generateNewToken(authenticationEntity.getId());
+        return newToken;
     }
 
 
@@ -99,6 +107,10 @@ public class AuthenticationService {
 
     public AuthenticationEntity findOne(Integer userId){
         return authenticationDao.findOne(userId);
+    }
+
+    public void saveAuthEntity(AuthenticationEntity authenticationEntity){
+        authenticationDao.save(authenticationEntity);
     }
 
 

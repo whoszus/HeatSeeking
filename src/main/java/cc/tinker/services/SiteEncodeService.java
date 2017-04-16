@@ -64,13 +64,50 @@ public class SiteEncodeService {
         if (siteEncodePasswordEntity.getSiteEncodeMethod() != 0) {
             switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
                 case 1: //RSA
-                    encodePasswordByRsa(siteEncodePasswordEntity.getSitePasswordEncode(),userId);
+                    try {
+                        String privateKey = getUserPrivateKey(userId);
+                        siteEncodePasswordEntity.setSiteEncodeMethod(1);
+                        siteEncodePasswordEntity.setSitePasswordEncode(encodePasswordByPrivateKey(siteEncodePasswordEntity.getSitePasswordEncode(),privateKey));
+                        siteEncodePasswordEntity.setDecodeCount(0);
+                        siteEncodePasswordEntity.setUserId(userId);
+                        siteEncodeRepository.save(siteEncodePasswordEntity);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     break;
             }
         }
     }
+
+    /**
+     * 根据加密方式解密密码；
+     * @param siteEncodePasswordEntity
+     * @param userId
+     * @return
+     */
+    public String  decodePassword(SiteEncodePasswordEntity siteEncodePasswordEntity,Integer userId) {
+        String decodedPassword = null;
+        if (siteEncodePasswordEntity.getSiteEncodeMethod() != 0) {
+            switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
+                case 1: //RSA
+                    try {
+                        String publicKey = getUserPublicKey(userId);
+                        decodedPassword = decodeByPublicKey(siteEncodePasswordEntity.getSitePasswordEncode(),publicKey);
+                        siteEncodeRepository.save(siteEncodePasswordEntity);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        return decodedPassword;
+    }
+
 
 
     /**
@@ -108,22 +145,105 @@ public class SiteEncodeService {
         }
     }
 
+
     /**
+     * 判断当前用户是否已经生成RSA密钥对，并返回私钥
+     * @param userId
+     * @return
+     */
+    @RsaKeyRequire
+    @Permission
+    private String getUserPrivateKey(Integer userId) throws Exception {
+        AuthenticationEntity authenticationEntity = authenticationService.findOne(userId);
+        String privateKeyDB = null;
+        if(authenticationEntity!=null){
+            if(authenticationEntity.getUserRsaPrivateKey()!= "" &&authenticationEntity.getUserRsaPrivateKey()!=null){
+                privateKeyDB = authenticationEntity.getUserRsaPrivateKey();
+            }else { //未生成RSA秘钥对，则生成密钥对，并存到数据库；
+                Map<String, Object> keyMap = RSAUtils.generateKeyPair();
+                String publicKey = RSAUtils.getPublicKey(keyMap);
+                String privateKey = RSAUtils.getPrivateKey(keyMap);
+                authenticationEntity.setUserRsaPrivateKey(privateKey);
+                authenticationEntity.setUserRsaPublicKey(publicKey);
+                privateKeyDB= privateKey;
+                authenticationService.saveAuthEntity(authenticationEntity);
+            }
+        }
+
+        return privateKeyDB;
+    }
+    /**
+     * encodePasswordByPrivateKey
      * 使用私钥加密密码
      * 1.判断当前用户是否已经生成RSA密钥对，
      * 2.使用用户私钥对密码进行加密；
      * 3.返回加密后的密文；
      * @return
      */
-    @RsaKeyRequire
-    @Permission
-    private String encodePasswordByRsa(String password,Integer userId){
-        AuthenticationEntity authenticationEntity = authenticationService.findOne(userId);
-
-//        authenticationEntity.get
-
-        return null;
+    private String encodePasswordByPrivateKey(String password,String privateKey) throws Exception {
+        byte[] data = password.getBytes();
+        byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
+        return new String(encodedData);
     }
+
+
+    /**
+     * 获取用户公钥 ；
+     * @param userId
+     * @return
+     */
+    public String getUserPublicKey(Integer userId){
+        AuthenticationEntity authenticationEntity = authenticationService.findOne(userId);
+        String publicKeyDB = null;
+        if(authenticationEntity!=null){
+            if(authenticationEntity.getUserRsaPublicKey()!= "" &&authenticationEntity.getUserRsaPublicKey()!=null){
+                publicKeyDB = authenticationEntity.getUserRsaPublicKey();
+            }else {
+                try {
+                    throw new Exception("用户ID:"+userId+"没有生成公钥，无法解密！");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        return  publicKeyDB;
+
+    }
+
+
+    /**
+     * 使用用户公钥解密密码；返回解密过后的密码明文；
+     * @param encodedPassword
+     * @param publicKey
+     * @return
+     */
+    public String decodeByPublicKey(String encodedPassword,String publicKey){
+        byte[] data = encodedPassword.getBytes();
+        String decodedPassword = null;
+        try {
+            byte[] decodedData = RSAUtils.decryptByPublicKey(data, publicKey);
+            decodedPassword  = new String(decodedData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decodedPassword;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -14,7 +14,7 @@ public class FrontEndResponse {
     }
 
     public FrontEndResponse(Boolean success) {
-        this(success, "操作成功");
+        this(success, success?"操作成功":"操作失败");
     }
 
     public FrontEndResponse(Boolean success, Object message) {
