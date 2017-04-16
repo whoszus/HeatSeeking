@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50627
 File Encoding         : 65001
 
-Date: 2017-04-10 10:45:40
+Date: 2017-04-16 23:18:14
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,17 +20,25 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `hs_authentication`;
 CREATE TABLE `hs_authentication` (
-  `ID` int(8) NOT NULL,
-  `PARASE` int(2) DEFAULT NULL COMMENT '是否验证 1 ：y ',
-  `CLIENT_NAME` varchar(32) DEFAULT NULL,
-  `PASSWORD` varchar(255) DEFAULT NULL,
-  `TOKEN` varchar(255) DEFAULT NULL,
-  `Email` varchar(30) DEFAULT NULL,
-  `EmailVerify` varchar(6) DEFAULT NULL COMMENT 'email 验证',
-  `REGISTE_TIME` datetime DEFAULT NULL,
-  `LAST_LONGIN_TIME` datetime DEFAULT NULL,
+  `ID` int(11) NOT NULL,
+  `USER_NAME` varchar(255) DEFAULT NULL,
+  `USER_PASSWORD` varchar(512) DEFAULT NULL,
+  `USER_CODE` varchar(255) DEFAULT NULL,
+  `USER_ACCOUNT` varchar(255) DEFAULT NULL,
+  `USER_CREATE_TIME` datetime DEFAULT NULL,
+  `USER_LAST_LOGIN_TIME` datetime DEFAULT NULL,
+  `LAST_LOGIN_IP` varchar(512) DEFAULT NULL COMMENT '最后登录 ip ',
+  `LAST_LOGIN_TIME` datetime DEFAULT NULL COMMENT '最后登录时间',
+  `USER_EMAIL` varchar(255) DEFAULT NULL COMMENT '邮件：可用于找回密码',
+  `USER_FEED_BACK` varchar(255) DEFAULT NULL COMMENT '找回密码的问题',
+  `USER_RSA_PRIVATE_KEY` varchar(2048) DEFAULT NULL COMMENT 'RSA PRIVATE KEY',
+  `USER_RSA_PUBLIC_KEY` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of hs_authentication
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for hs_role
@@ -45,15 +53,24 @@ CREATE TABLE `hs_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of hs_role
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for hs_token
 -- ----------------------------
 DROP TABLE IF EXISTS `hs_token`;
 CREATE TABLE `hs_token` (
   `TOKEN` varchar(255) NOT NULL,
-  `ACTIVE_TIME` datetime DEFAULT NULL,
-  `IS_EFFECTIVE` int(1) DEFAULT NULL,
+  `ACTIVE_TIME` datetime NOT NULL,
+  `IS_EFFECTIVE` int(1) NOT NULL,
+  `USER_ID` int(11) NOT NULL,
   PRIMARY KEY (`TOKEN`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of hs_token
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for ip_access_list
@@ -68,21 +85,27 @@ CREATE TABLE `ip_access_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for user
+-- Records of ip_access_list
 -- ----------------------------
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `ID` int(11) NOT NULL,
-  `USER_NAME` varchar(255) DEFAULT NULL,
-  `USER_PASSWORD` varchar(512) DEFAULT NULL,
-  `USER_CODE` varchar(255) DEFAULT NULL,
-  `USER_ACCOUNT` varchar(255) DEFAULT NULL,
-  `USER_CREATE_TIME` datetime DEFAULT NULL,
-  `USER_LAST_LOGIN_TIME` datetime DEFAULT NULL,
-  `LAST_LOGIN_IP` varchar(512) DEFAULT NULL COMMENT '最后登录 ip ',
-  `LAST_LOGIN_TIME` datetime DEFAULT NULL COMMENT '最后登录时间',
-  `USER_EMAIL` varchar(255) DEFAULT NULL COMMENT '邮件：可用于找回密码',
-  `USER_FEED_BACK` varchar(255) DEFAULT NULL COMMENT '找回密码的问题',
-  `USER_RSA_PRIVATE_KEY` varchar(1024) DEFAULT NULL COMMENT 'RSA PRIVATE KEY',
+
+-- ----------------------------
+-- Table structure for site_encode_password
+-- ----------------------------
+DROP TABLE IF EXISTS `site_encode_password`;
+CREATE TABLE `site_encode_password` (
+  `ID` int(8) NOT NULL,
+  `USER_ID` int(11) NOT NULL,
+  `SITE_CODE` varchar(255) NOT NULL,
+  `SITE_ADDR` varchar(255) DEFAULT NULL,
+  `SITE_PASSWORD_ENCODE` varchar(1024) NOT NULL,
+  `SITE_NAME` varchar(255) DEFAULT NULL,
+  `SITE_ENCODE_METHOD` int(3) NOT NULL,
+  `LAST_DECODE_TIME` datetime NOT NULL,
+  `LAST_DECODE_IP` varchar(20) NOT NULL,
+  `DECODE_COUNT` int(8) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of site_encode_password
+-- ----------------------------

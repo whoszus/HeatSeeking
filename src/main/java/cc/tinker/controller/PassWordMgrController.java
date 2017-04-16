@@ -87,10 +87,6 @@ public class PassWordMgrController {
         }else{
             return  new FrontEndResponse(false,"你的token不存在或已超时，请重新登录");
         }
-
     }
-
-
-
 
 }
