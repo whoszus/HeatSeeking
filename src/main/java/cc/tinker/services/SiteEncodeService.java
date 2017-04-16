@@ -45,7 +45,7 @@ public class SiteEncodeService {
     /**
      * 根据加密方式加密用户密码并保存到数据库
      */
-    public void encodeAndSavePassword(SiteEncodePasswordEntity siteEncodePasswordEntity) {
+    public void encodeAndSaveData(SiteEncodePasswordEntity siteEncodePasswordEntity) {
         if (siteEncodePasswordEntity.getSiteEncodeMethod() != 0) {
             switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
                 case 1: //RSA
@@ -92,5 +92,19 @@ public class SiteEncodeService {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 使用私钥加密密码
+     * 1.判断当前用户是否已经生成RSA密钥对，
+     * 2.使用用户私钥对密码进行加密；
+     * 3.返回加密后的密文；
+     * @return
+     */
+    private String  enCodePasswordAOP(){
+
+        return null;
+    }
+
+
 
 }

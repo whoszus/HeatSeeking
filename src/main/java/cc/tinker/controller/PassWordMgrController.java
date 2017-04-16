@@ -32,8 +32,6 @@ public class PassWordMgrController {
      */
     @RequestMapping("/encryptPsw")
     public FrontEndResponse encryptPsw(SiteEncodePasswordEntity siteEncode) {
-
-
         siteEncodeService.encodeAndSaveData(siteEncode);
         return new FrontEndResponse(true);
     }
