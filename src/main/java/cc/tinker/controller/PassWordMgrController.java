@@ -1,10 +1,13 @@
 package cc.tinker.controller;
 
 import cc.tinker.entity.SiteEncodePasswordEntity;
+import cc.tinker.entity.TokenEntity;
+import cc.tinker.services.AuthenticationService;
 import cc.tinker.services.SiteEncodeService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,8 @@ public class PassWordMgrController {
     @Autowired
     SiteEncodeService siteEncodeService;
 
+    @Autowired
+    AuthenticationService authenticationService;
     /**
      * 创建、修改用户密码记录；
      *
@@ -31,9 +36,16 @@ public class PassWordMgrController {
      * @return
      */
     @RequestMapping("/encryptPsw")
-    public FrontEndResponse encryptPsw(SiteEncodePasswordEntity siteEncode) {
-        siteEncodeService.encodeAndSaveData(siteEncode);
-        return new FrontEndResponse(true);
+    public FrontEndResponse encryptPsw(@CookieValue(value = "token", defaultValue = "empty") String userCookieToken, SiteEncodePasswordEntity siteEncode) {
+        TokenEntity tokenEntity = authenticationService.isTokenValid(userCookieToken);
+        if(tokenEntity!=null){
+            //获取用户id；
+
+            siteEncodeService.encodeAndSaveData(siteEncode,tokenEntity.getUserId());
+            return new FrontEndResponse(true);
+        }else{
+            return  new FrontEndResponse(false,"你的token不存在或已超时，请重新登录");
+        }
     }
 
     /**
@@ -41,7 +53,7 @@ public class PassWordMgrController {
      */
     @RequestMapping("/deletePsw")
     public FrontEndResponse deleteSiteEncode(SiteEncodePasswordEntity siteEncode) {
-
+        siteEncodeService.deleteOne(siteEncode);
         return new FrontEndResponse(true);
     }
 

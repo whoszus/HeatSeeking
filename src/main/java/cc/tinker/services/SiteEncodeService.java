@@ -1,6 +1,9 @@
 package cc.tinker.services;
 
 import cc.tinker.EncoderUtils.RSAUtils;
+import cc.tinker.annotation.*;
+import cc.tinker.annotation.Permission;
+import cc.tinker.entity.AuthenticationEntity;
 import cc.tinker.entity.SiteEncodePasswordEntity;
 import cc.tinker.repository.SiteEncodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import java.util.Map;
 public class SiteEncodeService {
     @Autowired
     SiteEncodeRepository siteEncodeRepository;
+    @Autowired AuthenticationService authenticationService;
 
     /**
      * 构建分页数据
@@ -43,13 +47,24 @@ public class SiteEncodeService {
     }
 
     /**
+     * 删除
+     * @param siteEncodePassword
+     */
+    public void deleteOne(SiteEncodePasswordEntity siteEncodePassword){
+        siteEncodeRepository.delete(siteEncodePassword);
+        //后面改为标志为删除，并不在数据库里面删除掉
+//        siteEncodePassword.set
+    }
+
+
+    /**
      * 根据加密方式加密用户密码并保存到数据库
      */
-    public void encodeAndSaveData(SiteEncodePasswordEntity siteEncodePasswordEntity) {
+    public void encodeAndSaveData(SiteEncodePasswordEntity siteEncodePasswordEntity,Integer userId) {
         if (siteEncodePasswordEntity.getSiteEncodeMethod() != 0) {
             switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
                 case 1: //RSA
-
+                    encodePasswordByRsa(siteEncodePasswordEntity.getSitePasswordEncode(),userId);
                     break;
                 default:
                     break;
@@ -100,10 +115,17 @@ public class SiteEncodeService {
      * 3.返回加密后的密文；
      * @return
      */
-    private String  enCodePasswordAOP(){
+    @RsaKeyRequire
+    @Permission
+    private String encodePasswordByRsa(String password,Integer userId){
+        AuthenticationEntity authenticationEntity = authenticationService.findOne(userId);
+
+//        authenticationEntity.get
 
         return null;
     }
+
+
 
 
 
