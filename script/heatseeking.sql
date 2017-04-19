@@ -109,3 +109,26 @@ CREATE TABLE `site_encode_password` (
 -- ----------------------------
 -- Records of site_encode_password
 -- ----------------------------
+
+
+/*
+Date: 2017-04-19 15:19:21
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for redsword_rsa_key
+-- ----------------------------
+DROP TABLE IF EXISTS `redsword_rsa_key`;
+CREATE TABLE `redsword_rsa_key` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `RSA_PUBLIC_KEY` varchar(1024) DEFAULT NULL,
+  `RSA_PRIVATE_KEY` varchar(2048) DEFAULT NULL,
+  `IS_DELETED` int(2) DEFAULT NULL COMMENT '0:正常 1：删除',
+  `KEY_HOLDER` int(11) DEFAULT NULL COMMENT '用户id',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
