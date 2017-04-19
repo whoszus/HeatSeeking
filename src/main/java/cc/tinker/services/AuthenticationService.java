@@ -63,8 +63,6 @@ public class AuthenticationService {
                 }
             }
         }
-
-
         return false;
     }
 

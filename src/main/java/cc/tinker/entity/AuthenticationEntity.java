@@ -21,7 +21,7 @@ public class AuthenticationEntity {
     private String lastLoginIp;
     private Date lastLoginTime;
     private String userEmail;
-    private String userFeedBack;
+        private String userFeedBack;
     private String userRsaPrivateKey;
     private String userRsaPublicKey;
 

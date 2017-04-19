@@ -1,11 +1,19 @@
-# tinker web site index
----
+## heatseeking - for web index 
+
+
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)](https://opensource.org/licenses/MIT)
 
 
+### to do List
 
-## To do List
-    1. AOP实现日志 以及登陆权限认证；
-    2. dev 环境与 prod 环境分离，使用不同的配置文件；
-    3. 启用缓存用户token；
-    4.
+- [x] AOP实现日志 以及登陆权限认证；
+- [x] dev 环境与 prod 环境分离，使用不同的配置文件；
+- [ ] 启用缓存用户token；
+- [ ] spring 服务注册发现；
+- [ ] sprigng boot 远程调用；
+- [ ] 将token验证作为全局服务，验证之后调用其他springboot的服务
+- [ ] 写文档管理action；
+
+### 完成进度
+1. 完成使用RSA加密方式加解密；
+

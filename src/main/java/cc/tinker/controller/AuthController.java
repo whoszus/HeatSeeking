@@ -37,7 +37,6 @@ public class AuthController {
     @RequestMapping("/verification.do")
     public FrontEndResponse  authentication(@CookieValue(value = "token", defaultValue = "empty") String fooCookie,
                                            String account, String password, HttpServletResponse response) {
-        Map map = new HashMap<>();
         if(authService.authentication(account, password, fooCookie)){
             return  new FrontEndResponse(true);
         }else {
@@ -59,7 +58,6 @@ public class AuthController {
     @RequestMapping("/register.do")
     public FrontEndResponse register(AuthenticationEntity auth,HttpServletResponse response) {
         //验证用户是否存在
-        Map map = new HashMap<>();
         String uuid = authService.register(auth);
         Cookie responseCookie = new Cookie("token", uuid);
         responseCookie.setMaxAge(2000);

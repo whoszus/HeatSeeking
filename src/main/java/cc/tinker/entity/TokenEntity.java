@@ -11,7 +11,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "hs_token")
-@Where(clause = "isEffective =1")
 public class TokenEntity {
     private String token;
 //    @Pattern("yyyy-MM-dd hh:mm:ss")

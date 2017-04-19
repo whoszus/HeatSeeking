@@ -11,6 +11,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface AuthenticationDao extends PagingAndSortingRepository<AuthenticationEntity, Integer>,
         JpaSpecificationExecutor<AuthenticationEntity> {
 
-    @Query("from AuthenticationEntity a where (a.userName=?1 or a.userAccount =?1 or a.userEmail=?1) and a.password =?2")
+    @Query("from AuthenticationEntity a where a.userName=?1 or a.userAccount =?1 or a.userEmail=?1 and a.userPassword =?2")
     AuthenticationEntity authByNameAndPsw(String clientName,String pwd);
 }

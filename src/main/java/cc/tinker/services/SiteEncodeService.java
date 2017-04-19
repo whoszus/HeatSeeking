@@ -229,7 +229,6 @@ public class SiteEncodeService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return decodedPassword;
 
     }
