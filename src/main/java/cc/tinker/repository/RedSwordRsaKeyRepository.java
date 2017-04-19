@@ -11,7 +11,7 @@ import tinker.entr.repository.BaseRepository;
  */
 public interface RedSwordRsaKeyRepository extends BaseRepository<RedswordRsaKeyEntity,Integer> {
 
-    @Query("from RedswordRsaKeyEntity r where r.userId = ?1")
+    @Query("from RedswordRsaKeyEntity r where r.keyHolder = ?1")
     RedswordRsaKeyEntity findOneByUserId(Integer userId);
 
 
