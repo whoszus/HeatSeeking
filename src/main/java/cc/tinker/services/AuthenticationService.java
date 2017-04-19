@@ -37,53 +37,81 @@ import java.util.UUID;
 @Transactional
 public class AuthenticationService {
 
-    @Autowired private AuthenticationDao authenticationDao;
-    @Autowired private TokenDao tokenDao;
+    @Autowired
+    private AuthenticationDao authenticationDao;
+    @Autowired
+    private TokenDao tokenDao;
 
-    public String authentication(String key,String value,String token){
-//      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
-        if(!token.equals("empty")){
-            TokenEntity tokenEntity = tokenDao.findOneByToken(token);
-            if (tokenEntity!=null ){
-                if(tokenEntity.getActiveTime().compareTo(new Date())!=-1){
-                    tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(),20));
+    /**
+     *  验证用户名密码；
+     * @param key
+     * @param value
+     * @param token
+     * @return
+     */
+    public boolean authentication(String key, String value, String token) {
+        AuthenticationEntity authenticationEntity = authenticationDao.authByNameAndPsw(key,value);
+        if(authenticationEntity!=null){
+            //      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
+            if (!token.equals("")) {
+                TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
+                if (tokenEntity != null) {
+                    tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(), 20));
                     tokenEntity.setIsEffective(1);
                     tokenDao.save(tokenEntity);
-                    return token;
-                }else{
-                    tokenEntity.setIsEffective(0);
+                    return true;
                 }
             }
         }
 
-//      2. 假如token是空
-        // decode md5
-        AuthenticationEntity authDB = authenticationDao.authByNameAndPsw(key, value);
-        if(authDB!=null){
-            authDB.setToken(generateNewToken());
-            return  authDB.getToken();
-        }
-        return null;
+
+        return false;
     }
 
 
-    public String register(AuthenticationEntity auth){
-        auth.setToken(generateNewToken());
-        authenticationDao.save(auth);
-        return auth.getToken();
+    public String register(AuthenticationEntity auth) {
+
+        AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
+        String newToken  = generateNewToken(authenticationEntity.getId());
+        return newToken;
     }
 
 
     /**
      * generate a New Token, 在数据库中有效时间为20min;
+     *
      * @return token value
      */
-    private String generateNewToken(){
+    private String generateNewToken(int userId) {
         TokenEntity tokenEntity = new TokenEntity();
-        tokenEntity.setTokern(UUID.randomUUID().toString());
-        tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(),20));
+        tokenEntity.setUserId(userId);
+        tokenEntity.setToken(UUID.randomUUID().toString());
+        tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(), 20));
         tokenEntity.setIsEffective(1);
         tokenDao.save(tokenEntity);
-        return tokenEntity.getTokern();
+        return tokenEntity.getToken();
     }
+
+    /**
+     * 判断token存在并未过期；
+     * @param token
+     * @return
+     */
+    public TokenEntity isTokenValid(String token) {
+        TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
+        if(tokenEntity!= null){
+            return tokenEntity;
+        }
+        return null;
+    }
+
+    public AuthenticationEntity findOne(Integer userId){
+        return authenticationDao.findOne(userId);
+    }
+
+    public void saveAuthEntity(AuthenticationEntity authenticationEntity){
+        authenticationDao.save(authenticationEntity);
+    }
+
+
 }

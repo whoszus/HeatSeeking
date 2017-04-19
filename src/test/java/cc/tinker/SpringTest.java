@@ -47,13 +47,12 @@ public class SpringTest {
             String publicKey = RSAUtils.getPublicKey(keyMap);
             String privateKey = RSAUtils.getPrivateKey(keyMap);
 
-
             System.out.println("公钥："+publicKey);
             System.out.println("私钥："+privateKey );
-
             System.err.println("私钥加密——公钥解密");
             String source = "这是一行测试RSA数字签名的无意义文字";
             System.out.println("原文字：\r\n" + source);
+
             byte[] data = source.getBytes();
             byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
             System.out.println("加密后：\r\n" + new String(encodedData));

@@ -38,7 +38,7 @@ public class LogAop {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 //    @Pointcut("execution( public * cc.tinker.controller.*.*(..))")
-    @Pointcut("execution(public * cc.tinker.controller..*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    @Pointcut("execution(public * cc.tinker.controller..*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)") 
     public void webLog(){
 
     }

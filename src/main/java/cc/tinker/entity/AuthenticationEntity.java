@@ -4,23 +4,29 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Tinker on 2016/12/16.
+ * Created by whoszus on 2017/4/10.
+ *
+ * @email whoszus@yahoo.com
  */
 @Entity
-@Table(name = "hs_authentication", schema = "heatseeking")
+@Table(name = "hs_authentication")
 public class AuthenticationEntity {
     private int id;
-    private Integer parase;
-    private String clientName;
-    private String password;
-    private String token;
-    private String email;
-    private String emailVerify;
-    private Date registeTime;
+    private String userName;
+    private String userPassword;
+    private String userCode;
+    private String userAccount;
+    private Date userCreateTime;
+    private Date userLastLoginTime;
+    private String lastLoginIp;
     private Date lastLoginTime;
+    private String userEmail;
+    private String userFeedBack;
+    private String userRsaPrivateKey;
+    private String userRsaPublicKey;
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
     }
@@ -30,83 +36,113 @@ public class AuthenticationEntity {
     }
 
     @Basic
-    @Column(name = "PARASE")
-    public Integer getParase() {
-        return parase;
+    @Column(name = "USER_NAME", nullable = true, length = 255)
+    public String getUserName() {
+        return userName;
     }
 
-    public void setParase(Integer parase) {
-        this.parase = parase;
-    }
-
-    @Basic
-    @Column(name = "CLIENT_NAME")
-    public String getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Basic
-    @Column(name = "PASSWORD")
-    public String getPassword() {
-        return password;
+    @Column(name = "USER_PASSWORD", nullable = true, length = 512)
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Basic
-    @Column(name = "TOKEN")
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     @Basic
-    @Column(name = "Email")
-    public String getEmail() {
-        return email;
+    @Column(name = "USER_CODE", nullable = true, length = 255)
+    public String getUserCode() {
+        return userCode;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Basic
-    @Column(name = "EmailVerify")
-    public String getEmailVerify() {
-        return emailVerify;
-    }
-
-    public void setEmailVerify(String emailVerify) {
-        this.emailVerify = emailVerify;
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
     }
 
     @Basic
-    @Column(name = "REGISTE_TIME")
-    public Date getRegisteTime() {
-        return registeTime;
+    @Column(name = "USER_ACCOUNT", nullable = true, length = 255)
+    public String getUserAccount() {
+        return userAccount;
     }
 
-    public void setRegisteTime(Date registeTime) {
-        this.registeTime = registeTime;
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
     }
 
     @Basic
-    @Column(name = "LAST_LONGIN_TIME")
+    @Column(name = "USER_CREATE_TIME", nullable = true)
+    public Date getUserCreateTime() {
+        return userCreateTime;
+    }
+
+    public void setUserCreateTime(Date userCreateTime) {
+        this.userCreateTime = userCreateTime;
+    }
+
+    @Basic
+    @Column(name = "USER_LAST_LOGIN_TIME", nullable = true)
+    public Date getUserLastLoginTime() {
+        return userLastLoginTime;
+    }
+
+    public void setUserLastLoginTime(Date userLastLoginTime) {
+        this.userLastLoginTime = userLastLoginTime;
+    }
+
+    @Basic
+    @Column(name = "LAST_LOGIN_IP", nullable = true, length = 512)
+    public String getLastLoginIp() {
+        return lastLoginIp;
+    }
+
+    public void setLastLoginIp(String lastLoginIp) {
+        this.lastLoginIp = lastLoginIp;
+    }
+
+    @Basic
+    @Column(name = "LAST_LOGIN_TIME", nullable = true)
     public Date getLastLoginTime() {
         return lastLoginTime;
     }
 
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    @Basic
+    @Column(name = "USER_EMAIL", nullable = true, length = 255)
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    @Basic
+    @Column(name = "USER_FEED_BACK", nullable = true, length = 255)
+    public String getUserFeedBack() {
+        return userFeedBack;
+    }
+
+    public void setUserFeedBack(String userFeedBack) {
+        this.userFeedBack = userFeedBack;
+    }
+
+    @Basic
+    @Column(name = "USER_RSA_PRIVATE_KEY", nullable = true, length = 1024)
+    public String getUserRsaPrivateKey() {
+        return userRsaPrivateKey;
+    }
+
+    public void setUserRsaPrivateKey(String userRsaPrivateKey) {
+        this.userRsaPrivateKey = userRsaPrivateKey;
     }
 
     @Override
@@ -117,14 +153,20 @@ public class AuthenticationEntity {
         AuthenticationEntity that = (AuthenticationEntity) o;
 
         if (id != that.id) return false;
-        if (parase != null ? !parase.equals(that.parase) : that.parase != null) return false;
-        if (clientName != null ? !clientName.equals(that.clientName) : that.clientName != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (token != null ? !token.equals(that.token) : that.token != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        if (emailVerify != null ? !emailVerify.equals(that.emailVerify) : that.emailVerify != null) return false;
-        if (registeTime != null ? !registeTime.equals(that.registeTime) : that.registeTime != null) return false;
+        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
+        if (userPassword != null ? !userPassword.equals(that.userPassword) : that.userPassword != null) return false;
+        if (userCode != null ? !userCode.equals(that.userCode) : that.userCode != null) return false;
+        if (userAccount != null ? !userAccount.equals(that.userAccount) : that.userAccount != null) return false;
+        if (userCreateTime != null ? !userCreateTime.equals(that.userCreateTime) : that.userCreateTime != null)
+            return false;
+        if (userLastLoginTime != null ? !userLastLoginTime.equals(that.userLastLoginTime) : that.userLastLoginTime != null)
+            return false;
+        if (lastLoginIp != null ? !lastLoginIp.equals(that.lastLoginIp) : that.lastLoginIp != null) return false;
         if (lastLoginTime != null ? !lastLoginTime.equals(that.lastLoginTime) : that.lastLoginTime != null)
+            return false;
+        if (userEmail != null ? !userEmail.equals(that.userEmail) : that.userEmail != null) return false;
+        if (userFeedBack != null ? !userFeedBack.equals(that.userFeedBack) : that.userFeedBack != null) return false;
+        if (userRsaPrivateKey != null ? !userRsaPrivateKey.equals(that.userRsaPrivateKey) : that.userRsaPrivateKey != null)
             return false;
 
         return true;
@@ -133,14 +175,27 @@ public class AuthenticationEntity {
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (parase != null ? parase.hashCode() : 0);
-        result = 31 * result + (clientName != null ? clientName.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (token != null ? token.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (emailVerify != null ? emailVerify.hashCode() : 0);
-        result = 31 * result + (registeTime != null ? registeTime.hashCode() : 0);
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (userPassword != null ? userPassword.hashCode() : 0);
+        result = 31 * result + (userCode != null ? userCode.hashCode() : 0);
+        result = 31 * result + (userAccount != null ? userAccount.hashCode() : 0);
+        result = 31 * result + (userCreateTime != null ? userCreateTime.hashCode() : 0);
+        result = 31 * result + (userLastLoginTime != null ? userLastLoginTime.hashCode() : 0);
+        result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
         result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
+        result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
+        result = 31 * result + (userFeedBack != null ? userFeedBack.hashCode() : 0);
+        result = 31 * result + (userRsaPrivateKey != null ? userRsaPrivateKey.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "USER_RSA_PUBLIC_KEY")
+    public String getUserRsaPublicKey() {
+        return userRsaPublicKey;
+    }
+
+    public void setUserRsaPublicKey(String userRsaPublicKey) {
+        this.userRsaPublicKey = userRsaPublicKey;
     }
 }

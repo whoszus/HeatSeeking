@@ -1,6 +1,7 @@
 package cc.tinker.entity;
 
 import org.hibernate.annotations.Where;
+import org.hibernate.dialect.InterbaseDialect;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,16 +17,9 @@ public class TokenEntity {
 //    @Pattern("yyyy-MM-dd hh:mm:ss")
     private Date activeTime;
     private Integer isEffective;
+    private Integer userId;
 
-    @Id
-    @Column(name = "token")
-    public String getTokern() {
-        return token;
-    }
 
-    public void setTokern(String token) {
-        this.token = token;
-    }
 
     @Basic
     @Column(name = "ACTIVE_TIME")
@@ -45,6 +39,25 @@ public class TokenEntity {
 
     public void setIsEffective(Integer isEffective) {
         this.isEffective = isEffective;
+    }
+
+    @Id
+    @Column(name = "token")
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Column(name = "USER_ID")
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -68,4 +81,6 @@ public class TokenEntity {
         result = 31 * result + (isEffective != null ? isEffective.hashCode() : 0);
         return result;
     }
+
+
 }

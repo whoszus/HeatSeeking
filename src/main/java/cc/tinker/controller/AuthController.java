@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tinker.entr.entity.FrontEndResponse;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -34,16 +35,20 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/verification.do")
-    public Map authentication(@CookieValue(value = "token", defaultValue = "empty") String fooCookie,
-                              String account, String password, HttpServletResponse response) {
+    public FrontEndResponse  authentication(@CookieValue(value = "token", defaultValue = "empty") String fooCookie,
+                                           String account, String password, HttpServletResponse response) {
         Map map = new HashMap<>();
-        String uuid = authService.authentication(account, password, fooCookie);
-        map.put("ret", 0);
-        map.put("token", uuid);
-        Cookie responseCookie = new Cookie("token", uuid);
-        responseCookie.setMaxAge(2000);
-        response.addCookie(responseCookie);
-        return map;
+        if(authService.authentication(account, password, fooCookie)){
+            return  new FrontEndResponse(true);
+        }else {
+            return new FrontEndResponse(false);
+        }
+//        map.put("ret", 0);
+//        map.put("token", uuid);
+//        Cookie responseCookie = new Cookie("token", uuid);
+//        responseCookie.setMaxAge(2000);
+//        response.addCookie(responseCookie);
+//        return map;
     }
 
     /**
@@ -52,14 +57,20 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/register.do")
-    public Map register(AuthenticationEntity auth) {
+    public FrontEndResponse register(AuthenticationEntity auth,HttpServletResponse response) {
         //验证用户是否存在
-
         Map map = new HashMap<>();
         String uuid = authService.register(auth);
-        map.put("ret", 0);
-        map.put("token", uuid);
-        return map;
+        Cookie responseCookie = new Cookie("token", uuid);
+        responseCookie.setMaxAge(2000);
+        response.addCookie(responseCookie);
+        return new FrontEndResponse(true);
+    }
+
+
+    @RequestMapping("/login")
+    public void login(AuthenticationEntity auth){
+
     }
 
 

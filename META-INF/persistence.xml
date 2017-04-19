@@ -4,7 +4,7 @@
 
     <persistence-unit name="persistenceUnit">
 
-        <class>cc.tinker.entity.HsAuthenticationEntity</class>
+        <class>cc.tinker.entity.AuthenticationEntity</class>
         <class>cc.tinker.entity.HsTokenEntity</class>
         <class>cc.tinker.entity.HsRoleEntity</class>
         <properties>
