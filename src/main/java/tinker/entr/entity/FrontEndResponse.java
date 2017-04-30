@@ -1,5 +1,7 @@
 package tinker.entr.entity;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+
 /**
  * Created by whoszus on 2017/4/10.
  *

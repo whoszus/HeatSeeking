@@ -4,6 +4,7 @@ import cc.tinker.entity.SiteEncodePasswordEntity;
 import cc.tinker.entity.TokenEntity;
 import cc.tinker.services.AuthenticationService;
 import cc.tinker.services.SiteEncodeService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,15 +37,16 @@ public class PassWordMgrController {
      * @return
      */
     @RequestMapping("/encryptPsw")
-    public FrontEndResponse encryptPsw(@CookieValue(value = "token", defaultValue = "empty") String userCookieToken, SiteEncodePasswordEntity siteEncode) {
+    public JSONPObject encryptPsw(@CookieValue(value = "token", defaultValue = "empty") String userCookieToken, SiteEncodePasswordEntity siteEncode,String callback) {
         TokenEntity tokenEntity = authenticationService.isTokenValid(userCookieToken);
         if(tokenEntity!=null){
             //获取用户id；
 
             siteEncodeService.encodeAndSaveData(siteEncode,tokenEntity.getUserId());
-            return new FrontEndResponse(true);
+
+            return new JSONPObject(callback,new FrontEndResponse(true));
         }else{
-            return  new FrontEndResponse(false,"你的token不存在或已超时，请重新登录");
+            return new JSONPObject(callback,new FrontEndResponse(false,"你的token不存在或已超时，请重新登录"));
         }
     }
 
