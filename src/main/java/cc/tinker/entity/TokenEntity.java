@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "hs_token")
+
 public class TokenEntity {
     private String token;
 //    @Pattern("yyyy-MM-dd hh:mm:ss")
@@ -41,7 +42,7 @@ public class TokenEntity {
     }
 
     @Id
-    @Column(name = "token")
+    @Column(name = "TOKEN")
     public String getToken() {
         return token;
     }

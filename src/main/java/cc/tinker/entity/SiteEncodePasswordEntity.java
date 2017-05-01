@@ -1,7 +1,11 @@
 package cc.tinker.entity;
 
+import cc.tinker.utils.DateTimeUtils;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by whoszus on 2017/4/10.
@@ -18,11 +22,14 @@ public class SiteEncodePasswordEntity {
     private String sitePasswordEncode;
     private String siteName;
     private int siteEncodeMethod;
-    private Timestamp lastDecodeTime;
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date lastDecodeTime;
     private String lastDecodeIp;
     private int decodeCount;
+    private String lastDecodeTimeString;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
@@ -94,11 +101,12 @@ public class SiteEncodePasswordEntity {
 
     @Basic
     @Column(name = "LAST_DECODE_TIME", nullable = false)
-    public Timestamp getLastDecodeTime() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public Date getLastDecodeTime() {
         return lastDecodeTime;
     }
 
-    public void setLastDecodeTime(Timestamp lastDecodeTime) {
+    public void setLastDecodeTime(Date lastDecodeTime) {
         this.lastDecodeTime = lastDecodeTime;
     }
 
@@ -120,6 +128,16 @@ public class SiteEncodePasswordEntity {
 
     public void setDecodeCount(int decodeCount) {
         this.decodeCount = decodeCount;
+    }
+
+
+    @Transient
+    public String getLastDecodeTimeString() {
+        return DateTimeUtils.convertDateToStringByFormat(this.lastDecodeTime);
+    }
+
+    public void setLastDecodeTimeString(String lastDecodeTimeString) {
+        this.lastDecodeTimeString = lastDecodeTimeString;
     }
 
     @Override

@@ -2,10 +2,12 @@ package cc.tinker.controller;
 
 import cc.tinker.entity.AuthenticationEntity;
 import cc.tinker.services.AuthenticationService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tinker.entr.entity.FrontEndResponse;
 
@@ -42,12 +44,6 @@ public class AuthController {
         }else {
             return new FrontEndResponse(false);
         }
-//        map.put("ret", 0);
-//        map.put("token", uuid);
-//        Cookie responseCookie = new Cookie("token", uuid);
-//        responseCookie.setMaxAge(2000);
-//        response.addCookie(responseCookie);
-//        return map;
     }
 
     /**
@@ -56,13 +52,15 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/register.do")
-    public FrontEndResponse register(AuthenticationEntity auth,HttpServletResponse response) {
+    public FrontEndResponse register(@CookieValue(value = "token",defaultValue = "empty") String token, AuthenticationEntity auth,HttpServletResponse response) {
         //验证用户是否存在
         String uuid = authService.register(auth);
         Cookie responseCookie = new Cookie("token", uuid);
+        responseCookie.setPath("/");
         responseCookie.setMaxAge(2000);
         response.addCookie(responseCookie);
-        return new FrontEndResponse(true);
+        System.out.println(token);
+        return new FrontEndResponse(true,auth.getUserName());
     }
 
 

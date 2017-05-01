@@ -16,6 +16,7 @@ public class IpAccessListEntity {
     private Integer isAccessable;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

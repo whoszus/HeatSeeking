@@ -68,7 +68,6 @@ public class AuthenticationService {
 
 
     public String register(AuthenticationEntity auth) {
-
         AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
         String newToken  = generateNewToken(authenticationEntity.getId());
         return newToken;
