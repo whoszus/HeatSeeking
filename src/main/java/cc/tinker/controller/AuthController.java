@@ -37,35 +37,45 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/verification.do")
-    public FrontEndResponse  authentication(@CookieValue(value = "token", defaultValue = "empty") String fooCookie,
+    public FrontEndResponse authentication(@CookieValue(value = "token", defaultValue = "empty") String fooCookie,
                                            String account, String password, HttpServletResponse response) {
-        if(authService.authentication(account, password, fooCookie)){
-            return  new FrontEndResponse(true);
-        }else {
+
+
+        if (authService.authentication(account, password, fooCookie)) {
+            return new FrontEndResponse(true);
+        } else {
             return new FrontEndResponse(false);
         }
     }
 
     /**
      * 用户注册接口,根据实体传入参数
+     *
      * @param auth
      * @return
      */
     @RequestMapping("/register.do")
-    public FrontEndResponse register(@CookieValue(value = "token",defaultValue = "empty") String token, AuthenticationEntity auth,HttpServletResponse response) {
+    public FrontEndResponse register(@CookieValue(value = "token", defaultValue = "empty") String token, AuthenticationEntity auth, HttpServletResponse response) {
         //验证用户是否存在
-        String uuid = authService.register(auth);
-        Cookie responseCookie = new Cookie("token", uuid);
-        responseCookie.setPath("/");
-        responseCookie.setMaxAge(2000);
-        response.addCookie(responseCookie);
-        System.out.println(token);
-        return new FrontEndResponse(true,auth.getUserName());
+//      1. 首先
+        Map map = authService.register(auth);
+        if((boolean)map.get("success")){
+            Cookie responseCookie = new Cookie("token", (String) map.get("token"));
+            responseCookie.setPath("/");
+            responseCookie.setMaxAge(2000);
+            response.addCookie(responseCookie);
+            System.out.println(token);
+            AuthenticationEntity authenticationEntityDB = (AuthenticationEntity) map.get("auth");
+            return new FrontEndResponse(true, authenticationEntityDB.getUserName());
+        }else {
+            return  new FrontEndResponse(false,"Email已存在");
+        }
+
     }
 
 
     @RequestMapping("/login")
-    public void login(AuthenticationEntity auth){
+    public void login(AuthenticationEntity auth) {
 
     }
 

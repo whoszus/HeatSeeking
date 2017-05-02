@@ -21,9 +21,9 @@ public class AuthenticationEntity {
     private String lastLoginIp;
     private Date lastLoginTime;
     private String userEmail;
-        private String userFeedBack;
-    private String userRsaPrivateKey;
-    private String userRsaPublicKey;
+    private String userFeedBack;
+    private String tokenCache;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -136,67 +136,12 @@ public class AuthenticationEntity {
         this.userFeedBack = userFeedBack;
     }
 
-    @Basic
-    @Column(name = "USER_RSA_PRIVATE_KEY", nullable = true, length = 1024)
-    public String getUserRsaPrivateKey() {
-        return userRsaPrivateKey;
+    @Transient
+    public String getTokenCache() {
+        return tokenCache;
     }
 
-    public void setUserRsaPrivateKey(String userRsaPrivateKey) {
-        this.userRsaPrivateKey = userRsaPrivateKey;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AuthenticationEntity that = (AuthenticationEntity) o;
-
-        if (id != that.id) return false;
-        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
-        if (userPassword != null ? !userPassword.equals(that.userPassword) : that.userPassword != null) return false;
-        if (userCode != null ? !userCode.equals(that.userCode) : that.userCode != null) return false;
-        if (userAccount != null ? !userAccount.equals(that.userAccount) : that.userAccount != null) return false;
-        if (userCreateTime != null ? !userCreateTime.equals(that.userCreateTime) : that.userCreateTime != null)
-            return false;
-        if (userLastLoginTime != null ? !userLastLoginTime.equals(that.userLastLoginTime) : that.userLastLoginTime != null)
-            return false;
-        if (lastLoginIp != null ? !lastLoginIp.equals(that.lastLoginIp) : that.lastLoginIp != null) return false;
-        if (lastLoginTime != null ? !lastLoginTime.equals(that.lastLoginTime) : that.lastLoginTime != null)
-            return false;
-        if (userEmail != null ? !userEmail.equals(that.userEmail) : that.userEmail != null) return false;
-        if (userFeedBack != null ? !userFeedBack.equals(that.userFeedBack) : that.userFeedBack != null) return false;
-        if (userRsaPrivateKey != null ? !userRsaPrivateKey.equals(that.userRsaPrivateKey) : that.userRsaPrivateKey != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (userName != null ? userName.hashCode() : 0);
-        result = 31 * result + (userPassword != null ? userPassword.hashCode() : 0);
-        result = 31 * result + (userCode != null ? userCode.hashCode() : 0);
-        result = 31 * result + (userAccount != null ? userAccount.hashCode() : 0);
-        result = 31 * result + (userCreateTime != null ? userCreateTime.hashCode() : 0);
-        result = 31 * result + (userLastLoginTime != null ? userLastLoginTime.hashCode() : 0);
-        result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
-        result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
-        result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
-        result = 31 * result + (userFeedBack != null ? userFeedBack.hashCode() : 0);
-        result = 31 * result + (userRsaPrivateKey != null ? userRsaPrivateKey.hashCode() : 0);
-        return result;
-    }
-
-    @Basic
-    @Column(name = "USER_RSA_PUBLIC_KEY")
-    public String getUserRsaPublicKey() {
-        return userRsaPublicKey;
-    }
-
-    public void setUserRsaPublicKey(String userRsaPublicKey) {
-        this.userRsaPublicKey = userRsaPublicKey;
+    public void setTokenCache(String tokenCache) {
+        this.tokenCache = tokenCache;
     }
 }

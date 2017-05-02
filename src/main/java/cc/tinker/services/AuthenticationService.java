@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -43,18 +45,19 @@ public class AuthenticationService {
     private TokenDao tokenDao;
 
     /**
-     *  验证用户名密码；
+     * 验证用户名密码；
+     *
      * @param key
      * @param value
      * @param token
      * @return
      */
     public boolean authentication(String key, String value, String token) {
-        AuthenticationEntity authenticationEntity = authenticationDao.authByNameAndPsw(key,value);
-        if(authenticationEntity!=null){
+        AuthenticationEntity authenticationEntity = authenticationDao.authByNameAndPsw(key, value);
+        if (authenticationEntity != null) {
             //      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
             if (!token.equals("")) {
-                TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
+                TokenEntity tokenEntity = tokenDao.findOneByToken(token, new Date());
                 if (tokenEntity != null) {
                     tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(), 20));
                     tokenEntity.setIsEffective(1);
@@ -66,11 +69,31 @@ public class AuthenticationService {
         return false;
     }
 
-
-    public String register(AuthenticationEntity auth) {
-        AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
-        String newToken  = generateNewToken(authenticationEntity.getId());
-        return newToken;
+    /**
+     * 用户注册
+     *
+     * @param auth
+     * @return
+     */
+    public Map register(AuthenticationEntity auth) {
+        /**
+         * 1. 判断用户是否存在
+         */
+        String newToken = "";
+        Map map = new HashMap();
+        AuthenticationEntity authenticationEntityDB = authenticationDao.authByNameAndPsw(auth.getUserName(), auth.getUserEmail());
+        if (authenticationEntityDB == null) {
+            AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
+            newToken = generateNewToken(authenticationEntity.getId());
+            map.put("success",true);
+            map.put("token",newToken);
+            map.put("auth",auth);
+        }else{
+            map.put("success",false);
+            map.put("token","");
+            map.put("auth",null);
+        }
+        return map;
     }
 
 
@@ -91,22 +114,23 @@ public class AuthenticationService {
 
     /**
      * 判断token存在并未过期；
+     *
      * @param token
      * @return
      */
     public TokenEntity isTokenValid(String token) {
-        TokenEntity tokenEntity = tokenDao.findOneByToken(token,new Date());
-        if(tokenEntity!= null){
+        TokenEntity tokenEntity = tokenDao.findOneByToken(token, new Date());
+        if (tokenEntity != null) {
             return tokenEntity;
         }
         return null;
     }
 
-    public AuthenticationEntity findOne(Integer userId){
+    public AuthenticationEntity findOne(Integer userId) {
         return authenticationDao.findOne(userId);
     }
 
-    public void saveAuthEntity(AuthenticationEntity authenticationEntity){
+    public void saveAuthEntity(AuthenticationEntity authenticationEntity) {
         authenticationDao.save(authenticationEntity);
     }
 

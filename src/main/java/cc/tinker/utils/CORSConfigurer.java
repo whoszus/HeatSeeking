@@ -12,7 +12,7 @@ public class CORSConfigurer extends WebMvcConfigurerAdapter {
 
     public void addCorsMappings(CorsRegistry corsRegistry){
 
-        corsRegistry.addMapping("/auth/*").allowedOrigins("*");
+        corsRegistry.addMapping("/**").allowedOrigins("*");
     }
 
 }
