@@ -27,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Tinker on 2016/12/16.
@@ -49,24 +46,24 @@ public class AuthenticationService {
      *
      * @param key
      * @param value
-     * @param token
      * @return
      */
-    public boolean authentication(String key, String value, String token) {
+    public AuthenticationEntity authentication(String key, String value) {
         AuthenticationEntity authenticationEntity = authenticationDao.authByNameAndPsw(key, value);
         if (authenticationEntity != null) {
             //      1.判断token是否存在且未超期 ？ 更新token超期时间，返回token：销毁token
+            List<TokenEntity> tokenEntityList = tokenDao.findOneByUserId(authenticationEntity.getId());
+            String token = tokenEntityList.get(0).getToken();
             if (!token.equals("")) {
                 TokenEntity tokenEntity = tokenDao.findOneByToken(token, new Date());
                 if (tokenEntity != null) {
                     tokenEntity.setActiveTime(DateTimeUtils.getDateByByMinutesInt(new Date(), 20));
                     tokenEntity.setIsEffective(1);
                     tokenDao.save(tokenEntity);
-                    return true;
                 }
             }
         }
-        return false;
+        return authenticationEntity;
     }
 
     /**
@@ -85,13 +82,13 @@ public class AuthenticationService {
         if (authenticationEntityDB == null) {
             AuthenticationEntity authenticationEntity = authenticationDao.save(auth);
             newToken = generateNewToken(authenticationEntity.getId());
-            map.put("success",true);
-            map.put("token",newToken);
-            map.put("auth",auth);
-        }else{
-            map.put("success",false);
-            map.put("token","");
-            map.put("auth",null);
+            map.put("success", true);
+            map.put("token", newToken);
+            map.put("auth", auth);
+        } else {
+            map.put("success", false);
+            map.put("token", "");
+            map.put("auth", null);
         }
         return map;
     }
@@ -134,5 +131,12 @@ public class AuthenticationService {
         authenticationDao.save(authenticationEntity);
     }
 
+    public void updateTokenValidTime(TokenEntity tokenEntity) {
+        if (tokenEntity != null) {
+            TokenEntity tokenEntityDB = tokenDao.findOneToken(tokenEntity.getToken());
+            tokenEntityDB.setActiveTime(DateTimeUtils.getDateByByDaysInt(new Date(), -20));
+            tokenDao.save(tokenEntityDB);
+        }
+    }
 
 }

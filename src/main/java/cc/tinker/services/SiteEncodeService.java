@@ -174,8 +174,8 @@ public class SiteEncodeService {
             if (redswordRsaKeyEntity.getRsaPrivateKey() != "" && redswordRsaKeyEntity.getRsaPrivateKey() != null) {
                 privateKeyDB = redswordRsaKeyEntity.getRsaPrivateKey();
             }
-        }else { //未生成RSA秘钥对，则生成密钥对，并存到数据库；
-            redswordRsaKeyEntity= new RedswordRsaKeyEntity();
+        } else { //未生成RSA秘钥对，则生成密钥对，并存到数据库；
+            redswordRsaKeyEntity = new RedswordRsaKeyEntity();
             Map<String, Object> keyMap = RSAUtils.generateKeyPair();
             String publicKey = RSAUtils.getPublicKey(keyMap);
             String privateKey = RSAUtils.getPrivateKey(keyMap);
@@ -213,11 +213,11 @@ public class SiteEncodeService {
      * @return
      */
     public String getUserPublicKey(Integer userId) {
-        AuthenticationEntity authenticationEntity = authenticationService.findOne(userId);
+        RedswordRsaKeyEntity redswordRsaKeyEntity = redSwordRsaKeyRepository.findOneByUserId(userId);
         String publicKeyDB = null;
-        if (authenticationEntity != null) {
-            if (authenticationEntity.getUserRsaPublicKey() != "" && authenticationEntity.getUserRsaPublicKey() != null) {
-                publicKeyDB = authenticationEntity.getUserRsaPublicKey();
+        if (redswordRsaKeyEntity != null) {
+            if (redswordRsaKeyEntity.getRsaPublicKey() != "" && redswordRsaKeyEntity.getRsaPublicKey() != null) {
+                publicKeyDB = redswordRsaKeyEntity.getRsaPublicKey();
             } else {
                 try {
                     throw new Exception("用户ID:" + userId + "没有生成公钥，无法解密！");

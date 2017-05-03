@@ -1,6 +1,7 @@
 package cc.tinker.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by whoszus on 2017/4/10.
@@ -10,19 +11,20 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ip_access_list")
 public class IpAccessListEntity {
-    private int id;
+    private Integer id;
     private String ipAddr;
     private int handleStatus;
     private Integer isAccessable;
+    private Date lastAccessDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

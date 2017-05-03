@@ -7,6 +7,7 @@
         <class>cc.tinker.entity.AuthenticationEntity</class>
         <class>cc.tinker.entity.HsTokenEntity</class>
         <class>cc.tinker.entity.HsRoleEntity</class>
+        <class>cc.tinker.entity.RedswordAccessHistoryEntity</class>
         <properties>
             <property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/heatseeking"/>
             <property name="toplink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
