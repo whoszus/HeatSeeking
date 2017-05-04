@@ -21,9 +21,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<jackson.version>1.9.13</jackson.version>
-		<jackson.core.version>2.8.8</jackson.core.version>
+		<java.version>1.7</java.version>
+		<!--<jackson.version>1.9.13</jackson.version>-->
+		<!--<jackson.core.version>2.8.8</jackson.core.version>-->
 	</properties>
 
 
@@ -95,21 +95,54 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.core.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.codehaus.jackson</groupId>-->
+			<!--<artifactId>jackson-mapper-asl</artifactId>-->
+			<!--<version>1.9.13</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>com.fasterxml.jackson.core</groupId>-->
+			<!--<artifactId>jackson-core</artifactId>-->
+			<!--<version>${jackson.core.version}</version>-->
+		<!--</dependency>-->
 		<!--<dependency>-->
 			<!--<groupId>com.fasterxml.jackson.core</groupId>-->
 			<!--<artifactId>jackson-databind</artifactId>-->
 			<!--<version>${jackson.core.version}</version>-->
 		<!--</dependency>-->
+
+
+		<dependency>
+			<groupId>gosun</groupId>
+			<artifactId>gosuncn-core</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/gosuncn-core-0.0.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>gosun</groupId>
+			<artifactId>gosuncn-common</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/gosuncn-common-0.0.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>JzDown</groupId>
+			<artifactId>DownLoadClient</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/DownLoadClient.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>JzDown</groupId>
+			<artifactId>mina-core</artifactId>
+			<version>2.0.15</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/mina-core-2.0.15.jar</systemPath>
+		</dependency>
 
 
 
@@ -129,17 +162,17 @@
 				<version>3.1</version>
 			</plugin>
 			<!--springboot hotswap plugins-->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework</groupId>
-						<artifactId>springloaded</artifactId>
-						<version>1.2.6.RELEASE</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.springframework.boot</groupId>-->
+				<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+				<!--<dependencies>-->
+					<!--<dependency>-->
+						<!--<groupId>org.springframework</groupId>-->
+						<!--<artifactId>springloaded</artifactId>-->
+						<!--<version>1.2.6.RELEASE</version>-->
+					<!--</dependency>-->
+				<!--</dependencies>-->
+			<!--</plugin>-->
 			<!--<plugin>-->
 				<!--<groupId>com.spotify</groupId>-->
 				<!--<artifactId>docker-maven-plugin</artifactId>-->
@@ -159,15 +192,15 @@
 
 		</plugins>
 
-		<!--<resources>-->
-			<!--<resource>-->
-				<!--<directory>libs</directory>-->
-				<!--<targetPath>BOOT-INF/libs/</targetPath>-->
-				<!--<includes>-->
-					<!--<include>*.jar</include>-->
-				<!--</includes>-->
-			<!--</resource>-->
-		<!--</resources>-->
+		<resources>
+			<resource>
+				<directory>libs</directory>
+				<targetPath>BOOT-INF/lib/</targetPath>
+				<includes>
+					<include>*.jar</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 
