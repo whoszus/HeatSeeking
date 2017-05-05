@@ -41,10 +41,8 @@ public class AuthController {
     @RequestMapping("/loginWithToken.do")
     public FrontEndResponse authentication(@CookieValue(value = "token", defaultValue = "empty") String token,
                                            String account, String password, HttpServletResponse response) {
-
-
-        if (!token.equals("empty")) {
-            TokenEntity tokenEntity = authService.isTokenValid(token);
+        TokenEntity tokenEntity = authService.isTokenValid(token);
+        if (!token.equals("empty") && tokenEntity!= null) {
             AuthenticationEntity authenticationEntity = authService.findOne(tokenEntity.getUserId());
             authService.updateTokenValidTime(tokenEntity);
             return new FrontEndResponse(true, authenticationEntity.getUserName());
@@ -54,10 +52,16 @@ public class AuthController {
     }
 
     @RequestMapping("/loginWithAccount.do")
-    public FrontEndResponse loginWithAccount(String account, String password) {
-        AuthenticationEntity authenticationEntity = authService.authentication(account, password);
-        if (authenticationEntity != null) {
-            return new FrontEndResponse(true, authenticationEntity.getUserName());
+    public FrontEndResponse loginWithAccount(AuthenticationEntity authenticationEntity, HttpServletResponse response) {
+        AuthenticationEntity authenticationEntityDB = authService.authentication(authenticationEntity.getUserEmail(), authenticationEntity.getUserPassword());
+
+        if (authenticationEntityDB != null) {
+            String token = authService.generateNewToken(authenticationEntityDB.getId());
+            Cookie responseCookie = new Cookie("token",token);
+            responseCookie.setPath("/");
+//            responseCookie.setMaxAge(2000);
+            response.addCookie (responseCookie);
+            return new FrontEndResponse(true, authenticationEntityDB.getUserName());
         } else {
             return new FrontEndResponse(false, "用户名或密码不正确！");
         }

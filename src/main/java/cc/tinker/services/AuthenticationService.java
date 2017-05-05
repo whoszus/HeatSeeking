@@ -99,7 +99,7 @@ public class AuthenticationService {
      *
      * @return token value
      */
-    private String generateNewToken(int userId) {
+    public String generateNewToken(int userId) {
         TokenEntity tokenEntity = new TokenEntity();
         tokenEntity.setUserId(userId);
         tokenEntity.setToken(UUID.randomUUID().toString());
