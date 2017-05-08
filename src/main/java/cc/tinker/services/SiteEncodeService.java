@@ -246,7 +246,6 @@ public class SiteEncodeService {
         try {
             byte[] decodedData = RSAUtils.decryptByPublicKey(data, publicKey);
             decodedPassword = new String(decodedData);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

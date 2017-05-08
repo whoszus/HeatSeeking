@@ -134,7 +134,7 @@ public class AuthenticationService {
     public void updateTokenValidTime(TokenEntity tokenEntity) {
         if (tokenEntity != null) {
             TokenEntity tokenEntityDB = tokenDao.findOneToken(tokenEntity.getToken());
-            tokenEntityDB.setActiveTime(DateTimeUtils.getDateByByDaysInt(new Date(), -20));
+            tokenEntityDB.setActiveTime(DateTimeUtils.getDateByByDaysInt(new Date(), 10));
             tokenDao.save(tokenEntityDB);
         }
     }

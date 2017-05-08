@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * Created by Tinker on 2016/12/16.
  */
-@SpringBootApplication
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -42,7 +41,7 @@ public class AuthController {
     public FrontEndResponse authentication(@CookieValue(value = "token", defaultValue = "empty") String token,
                                            String account, String password, HttpServletResponse response) {
         TokenEntity tokenEntity = authService.isTokenValid(token);
-        if (!token.equals("empty") && tokenEntity!= null) {
+        if (!token.equals("empty") && tokenEntity != null) {
             AuthenticationEntity authenticationEntity = authService.findOne(tokenEntity.getUserId());
             authService.updateTokenValidTime(tokenEntity);
             return new FrontEndResponse(true, authenticationEntity.getUserName());
@@ -57,10 +56,12 @@ public class AuthController {
 
         if (authenticationEntityDB != null) {
             String token = authService.generateNewToken(authenticationEntityDB.getId());
-            Cookie responseCookie = new Cookie("token",token);
+            Cookie responseCookie = new Cookie("token", token);
             responseCookie.setPath("/");
-//            responseCookie.setMaxAge(2000);
-            response.addCookie (responseCookie);
+            responseCookie.setHttpOnly(true);
+            responseCookie.setMaxAge(20 * 1000 * 60);
+            response.addCookie(responseCookie);
+            response.addCookie(new Cookie("test", "test"));
             return new FrontEndResponse(true, authenticationEntityDB.getUserName());
         } else {
             return new FrontEndResponse(false, "用户名或密码不正确！");
@@ -82,9 +83,8 @@ public class AuthController {
         if ((boolean) map.get("success")) {
             Cookie responseCookie = new Cookie("token", (String) map.get("token"));
             responseCookie.setPath("/");
-            responseCookie.setMaxAge(2000);
+            responseCookie.setMaxAge(20 * 1000 * 60);
             response.addCookie(responseCookie);
-            System.out.println(token);
             AuthenticationEntity authenticationEntityDB = (AuthenticationEntity) map.get("auth");
             return new FrontEndResponse(true, authenticationEntityDB.getUserName());
         } else {
