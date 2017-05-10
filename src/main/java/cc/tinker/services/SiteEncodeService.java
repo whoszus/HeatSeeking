@@ -1,13 +1,15 @@
 package cc.tinker.services;
 
-import cc.tinker.EncoderUtils.RSAUtils;
-import cc.tinker.annotation.*;
 import cc.tinker.annotation.Permission;
-import cc.tinker.entity.AuthenticationEntity;
+import cc.tinker.annotation.RsaKeyRequire;
+import cc.tinker.controller.AuthController;
+import cc.tinker.encrypt.RSA;
 import cc.tinker.entity.RedswordRsaKeyEntity;
 import cc.tinker.entity.SiteEncodePasswordEntity;
 import cc.tinker.repository.RedSwordRsaKeyRepository;
 import cc.tinker.repository.SiteEncodeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tinker.entr.repository.SearchFilter;
 
-import java.security.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
@@ -35,6 +37,8 @@ public class SiteEncodeService {
     AuthenticationService authenticationService;
     @Autowired
     RedSwordRsaKeyRepository redSwordRsaKeyRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 
     /**
      * 构建分页数据
@@ -74,7 +78,8 @@ public class SiteEncodeService {
                     String privateKey = getUserPrivateKey(userId);
 
                     siteEncodePasswordEntity.setSiteEncodeMethod(1);
-                    siteEncodePasswordEntity.setSitePasswordEncode(encodePasswordByPrivateKey(siteEncodePasswordEntity.getSitePasswordEncode(), privateKey));
+                    byte[] encodePasswordString = encodePasswordByPrivateKey(siteEncodePasswordEntity.getPassword(), privateKey);
+                    siteEncodePasswordEntity.setSitePasswordEncode(encodePasswordString);
                     siteEncodePasswordEntity.setDecodeCount(0);
                     siteEncodePasswordEntity.setUserId(userId);
                     siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
@@ -99,13 +104,15 @@ public class SiteEncodeService {
      */
     public String decodePassword(SiteEncodePasswordEntity siteEncodePasswordEntity, Integer userId) {
         String decodedPassword = null;
-        if (siteEncodePasswordEntity.getSiteEncodeMethod() != 0) {
+        SiteEncodePasswordEntity siteEncodePasswordEntityDB = siteEncodeRepository.findOne(siteEncodePasswordEntity.getId());
+
+        if (siteEncodePasswordEntityDB!=null) {
             switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
                 case 1: //RSA
                     try {
                         String publicKey = getUserPublicKey(userId);
-                        decodedPassword = decodeByPublicKey(siteEncodePasswordEntity.getSitePasswordEncode(), publicKey);
-                        siteEncodeRepository.save(siteEncodePasswordEntity);
+                        decodedPassword = decodeByPublicKey(siteEncodePasswordEntityDB.getSitePasswordEncode(), publicKey);
+                        siteEncodeRepository.save(siteEncodePasswordEntityDB);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -130,7 +137,7 @@ public class SiteEncodeService {
         try {
             System.err.println("私钥加密——公钥解密");
             byte[] data = password.getBytes();
-            byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
+            byte[] encodedData = RSA.encryptByPrivateKey(data, privateKey);
             System.out.println("加密后密码：\r\n" + new String(encodedData));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -146,9 +153,9 @@ public class SiteEncodeService {
     private void getKeys() {
         Map<String, Object> keyMap = null;
         try {
-            keyMap = RSAUtils.generateKeyPair();
-            String publicKey = RSAUtils.getPublicKey(keyMap);
-            String privateKey = RSAUtils.getPrivateKey(keyMap);
+            keyMap = RSA.genKeyPair();
+            String publicKey = RSA.getPublicKey(keyMap);
+            String privateKey = RSA.getPrivateKey(keyMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -173,17 +180,19 @@ public class SiteEncodeService {
         if (redswordRsaKeyEntity != null) {
             if (redswordRsaKeyEntity.getRsaPrivateKey() != "" && redswordRsaKeyEntity.getRsaPrivateKey() != null) {
                 privateKeyDB = redswordRsaKeyEntity.getRsaPrivateKey();
+                logger.info("获得私钥：" +privateKeyDB);
             }
         } else { //未生成RSA秘钥对，则生成密钥对，并存到数据库；
             redswordRsaKeyEntity = new RedswordRsaKeyEntity();
-            Map<String, Object> keyMap = RSAUtils.generateKeyPair();
-            String publicKey = RSAUtils.getPublicKey(keyMap);
-            String privateKey = RSAUtils.getPrivateKey(keyMap);
+            Map<String, Object> keyMap = RSA.genKeyPair();
+            String publicKey = RSA.getPublicKey(keyMap);
+            String privateKey = RSA.getPrivateKey(keyMap);
             redswordRsaKeyEntity.setRsaPrivateKey(privateKey);
             redswordRsaKeyEntity.setRsaPublicKey(publicKey);
             redswordRsaKeyEntity.setKeyHolder(userId);
             redswordRsaKeyEntity.setId(0);
             privateKeyDB = privateKey;
+            logger.info("生成私钥：" +privateKeyDB);
             redSwordRsaKeyRepository.save(redswordRsaKeyEntity);
         }
 
@@ -199,10 +208,10 @@ public class SiteEncodeService {
      *
      * @return
      */
-    private String encodePasswordByPrivateKey(String password, String privateKey) throws Exception {
+    private byte[] encodePasswordByPrivateKey(String password, String privateKey) throws Exception {
         byte[] data = password.getBytes();
-        byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
-        return new String(encodedData);
+        byte[] encodedData = RSA.encryptByPrivateKey(data, privateKey);
+        return encodedData;
     }
 
 
@@ -240,12 +249,14 @@ public class SiteEncodeService {
      * @param publicKey
      * @return
      */
-    public String decodeByPublicKey(String encodedPassword, String publicKey) {
-        byte[] data = encodedPassword.getBytes();
+    public String decodeByPublicKey(byte[] encodedPassword, String publicKey) {
+        System.out.println("encodedPassword      ~~~  " +encodedPassword);
+        System.out.println("publicKey    ~~~  " +publicKey);
         String decodedPassword = null;
         try {
-            byte[] decodedData = RSAUtils.decryptByPublicKey(data, publicKey);
+            byte[] decodedData = RSA.decryptByPublicKey(encodedPassword, publicKey);
             decodedPassword = new String(decodedData);
+            logger.info("解密后 +" +decodedPassword);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -15,7 +15,8 @@
  */
 package cc.tinker.encrypt;
 
-import com.baomidou.kisso.common.util.Base64Util;
+
+import cc.tinker.encrypt.base64.Base64Util;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;

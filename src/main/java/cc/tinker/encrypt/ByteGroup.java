@@ -20,10 +20,7 @@ import java.util.ArrayList;
 /**
  * <p>
  * 字节组处理
- * </p>
- * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class ByteGroup {
 

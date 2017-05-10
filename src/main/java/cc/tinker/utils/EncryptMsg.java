@@ -20,8 +20,7 @@ package cc.tinker.utils;
  * API 加密消息实体类
  * </p>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class EncryptMsg {
 	/*

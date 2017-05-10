@@ -15,8 +15,7 @@
  */
 package cc.tinker.encrypt;
 
-import com.baomidou.kisso.SSOConfig;
-
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -24,8 +23,7 @@ import java.util.Arrays;
  * 提供基于 PKCS7 算法的加解密
  * </p>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class PKCS7Encoder {
 	private static final int BLOCK_SIZE = 32;
@@ -53,7 +51,7 @@ public class PKCS7Encoder {
 		for (int index = 0; index < amountToPad; index++) {
 			tmp += padChr;
 		}
-		return tmp.getBytes(SSOConfig.CHARSET_ENCODING);
+		return tmp.getBytes(Charset.forName("UTF-8"));
 	}
 
 	/**

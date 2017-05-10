@@ -20,8 +20,7 @@ package cc.tinker.exception;
  * AES 异常
  * </p>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class AESException extends Exception {
 

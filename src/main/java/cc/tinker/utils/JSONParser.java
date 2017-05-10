@@ -24,8 +24,7 @@ import com.alibaba.fastjson.JSON;
  * 提供提取消息格式中的密文及生成回复消息格式
  * </p>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class JSONParser {
 
@@ -42,7 +41,6 @@ public class JSONParser {
 	 */
 	public static EncryptMsg extract( String jsontext ) throws AESException {
 		try {
-			SSOConfig config = SSOConfig.getInstance();
 			return JSON.parseObject(jsontext, EncryptMsg.class);
 		} catch (Exception e) {
 			throw new AESException(AESException.ERROR_PARSE_JSON, e);
@@ -67,8 +65,7 @@ public class JSONParser {
 	 * @return 生成的 JSON 字符串
 	 */
 	public static String generate( String encrypt, String signature, String timeStamp, String nonce ) {
-		SSOConfig config = SSOConfig.getInstance();
-		return config.getParser().toJson(new EncryptMsg(encrypt, signature, timeStamp, nonce));
+		return JSON.toJSONString(new EncryptMsg(encrypt, signature, timeStamp, nonce));
 	}
 
 }

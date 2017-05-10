@@ -29,9 +29,7 @@ import java.io.StringReader;
  * <p>
  * 提供提取消息格式中的密文及生成回复消息格式
  * </p>
- * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class XMLParser {
 

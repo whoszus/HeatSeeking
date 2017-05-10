@@ -19,7 +19,7 @@ public class SiteEncodePasswordEntity {
     private int userId;
     private String siteCode;
     private String siteAddr;
-    private String sitePasswordEncode;
+    private byte[] sitePasswordEncode;
     private String siteName;
     private int siteEncodeMethod;
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -27,6 +27,7 @@ public class SiteEncodePasswordEntity {
     private String lastDecodeIp;
     private int decodeCount;
     private String lastDecodeTimeString;
+    private String password ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,12 +71,12 @@ public class SiteEncodePasswordEntity {
     }
 
     @Basic
-    @Column(name = "SITE_PASSWORD_ENCODE", nullable = false, length = 1024)
-    public String getSitePasswordEncode() {
+    @Column(name = "SITE_PASSWORD_ENCODE")
+    public byte[] getSitePasswordEncode() {
         return sitePasswordEncode;
     }
 
-    public void setSitePasswordEncode(String sitePasswordEncode) {
+    public void setSitePasswordEncode(byte[] sitePasswordEncode) {
         this.sitePasswordEncode = sitePasswordEncode;
     }
 
@@ -138,6 +139,16 @@ public class SiteEncodePasswordEntity {
 
     public void setLastDecodeTimeString(String lastDecodeTimeString) {
         this.lastDecodeTimeString = lastDecodeTimeString;
+    }
+
+
+    @Transient
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

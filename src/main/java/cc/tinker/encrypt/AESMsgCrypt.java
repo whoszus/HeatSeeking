@@ -18,12 +18,14 @@ package cc.tinker.encrypt;
 
 import cc.tinker.encrypt.base64.Base64;
 import cc.tinker.exception.AESException;
+import cc.tinker.utils.JSONParser;
 import cc.tinker.utils.RandomUtil;
 import cc.tinker.utils.XMLParser;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -46,8 +48,7 @@ import java.util.logging.Logger;
  * <li>如果安装了JDK，将两个jar文件放到%JDK_HOME%\jre\lib\security目录下覆盖原来文件</li>
  * </ol>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class AESMsgCrypt {
 	private static final Logger logger = Logger.getLogger("AseMsgCrypt");
@@ -130,10 +131,10 @@ public class AESMsgCrypt {
 	 */
 	public String encrypt(String text) throws AESException {
 		ByteGroup byteCollector = new ByteGroup();
-		byte[] randomStrBytes = RandomUtil.getCharacterAndNumber(16).getBytes(SSOConfig.CHARSET_ENCODING);
-		byte[] textBytes = text.getBytes(SSOConfig.CHARSET_ENCODING);
+		byte[] randomStrBytes = RandomUtil.getCharacterAndNumber(16).getBytes(Charset.forName("UTF-8"));
+		byte[] textBytes = text.getBytes(Charset.forName("UTF-8"));
 		byte[] networkBytesOrder = getNetworkBytesOrder(textBytes.length);
-		byte[] appidBytes = appId.getBytes(SSOConfig.CHARSET_ENCODING);
+		byte[] appidBytes = appId.getBytes(Charset.forName("UTF-8"));
 
 		/* randomStr + networkBytesOrder + text + appid */
 		byteCollector.addBytes(randomStrBytes);
@@ -206,9 +207,9 @@ public class AESMsgCrypt {
 
 			int xmlLength = recoverNetworkBytesOrder(networkOrder);
 
-			xmlContent = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), SSOConfig.CHARSET_ENCODING);
+			xmlContent = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), Charset.forName("UTF-8"));
 			from_appid = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length),
-					SSOConfig.CHARSET_ENCODING);
+                    Charset.forName("UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AESException(AESException.ERROR_ILLEGAL_BUFFER);

@@ -15,7 +15,6 @@
  */
 package cc.tinker.encrypt;
 
-import com.baomidou.kisso.SSOConfig;
 
 import java.security.MessageDigest;
 import java.util.logging.Logger;
@@ -25,8 +24,7 @@ import java.util.logging.Logger;
  * 盐值加密工具类（常用登录密码加密）
  * </p>
  * 
- * @author hubin
- * @Date 2016-01-20
+
  */
 public class SaltEncoder {
 
@@ -101,7 +99,7 @@ public class SaltEncoder {
 		try {
 			MessageDigest md = MessageDigest.getInstance(algorithm);
 			//加密后的字符串  
-			return Byte2Hex.byte2Hex(md.digest(mergeRawTextAndSalt(rawText).getBytes(SSOConfig.getSSOEncoding())));
+			return Byte2Hex.byte2Hex(md.digest(mergeRawTextAndSalt(rawText).getBytes("UTF-8")));
 		} catch ( Exception e ) {
 			logger.severe(" SaltEncoder encode exception.");
 			e.printStackTrace();
@@ -146,7 +144,7 @@ public class SaltEncoder {
 		} else {
 			StringBuffer mt = new StringBuffer();
 			mt.append(rawText);
-			mt.append(SSOConfig.CUT_SYMBOL);
+			mt.append("#");
 			mt.append(this.salt);
 			return mt.toString();
 		}

@@ -22,9 +22,7 @@ import java.util.UUID;
  * <p>
  * 随机数工具类
  * </p>
- * 
- * @author hubin
- * @Date 2014-5-9
+
  */
 public class RandomUtil {
 

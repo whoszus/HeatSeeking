@@ -19,9 +19,7 @@ package cc.tinker.encrypt;
  * <p>
  * 算法类型枚举类
  * </p>
- * 
- * @author hubin
- * @Date 2016-01-20
+ *
  */
 public enum Algorithm {
 	DES("DES", "DES encrypt"), AES("AES", "AES encrypt"), BLOWFISH("BLOWFISH", "Blowfish encrypt"), RC2("RC2",

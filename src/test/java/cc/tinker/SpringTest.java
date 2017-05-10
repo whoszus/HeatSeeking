@@ -1,6 +1,6 @@
 package cc.tinker;
 
-import cc.tinker.EncoderUtils.RSAUtils;
+import cc.tinker.encrypt.RSA;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,9 +43,9 @@ public class SpringTest {
     public void RSATest() {
         KeyPairGenerator generator = null;
         try {
-            Map<String, Object> keyMap = RSAUtils.generateKeyPair();
-            String publicKey = RSAUtils.getPublicKey(keyMap);
-            String privateKey = RSAUtils.getPrivateKey(keyMap);
+            Map<String, Object> keyMap = RSA.genKeyPair();
+            String publicKey = RSA.getPublicKey(keyMap);
+            String privateKey = RSA.getPrivateKey(keyMap);
 
             System.out.println("公钥："+publicKey);
             System.out.println("私钥："+privateKey );
@@ -54,15 +54,15 @@ public class SpringTest {
             System.out.println("原文字：\r\n" + source);
 
             byte[] data = source.getBytes();
-            byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
+            byte[] encodedData = RSA.encryptByPrivateKey(data, privateKey);
             System.out.println("加密后：\r\n" + new String(encodedData));
-            byte[] decodedData = RSAUtils.decryptByPublicKey(encodedData, publicKey);
+            byte[] decodedData = RSA.decryptByPublicKey(encodedData, publicKey);
             String target = new String(decodedData);
             System.out.println("解密后: \r\n" + target);
             System.err.println("私钥签名——公钥验证签名");
-            String sign = RSAUtils.sign(encodedData, privateKey);
+            String sign = RSA.sign(encodedData, privateKey);
             System.err.println("签名:\r" + sign);
-            boolean status = RSAUtils.verify(encodedData, publicKey, sign);
+            boolean status = RSA.verify(encodedData, publicKey, sign);
             System.err.println("验证结果:\r" + status);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

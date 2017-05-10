@@ -58,7 +58,6 @@ public class AuthController {
             String token = authService.generateNewToken(authenticationEntityDB.getId());
             Cookie responseCookie = new Cookie("token", token);
             responseCookie.setPath("/");
-            responseCookie.setHttpOnly(true);
             responseCookie.setMaxAge(20 * 1000 * 60);
             response.addCookie(responseCookie);
             response.addCookie(new Cookie("test", "test"));

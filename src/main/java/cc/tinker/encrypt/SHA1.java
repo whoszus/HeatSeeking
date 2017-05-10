@@ -15,7 +15,8 @@
  */
 package cc.tinker.encrypt;
 
-import com.baomidou.kisso.exception.AESException;
+
+import cc.tinker.exception.AESException;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -25,8 +26,7 @@ import java.util.Arrays;
  * SHA1 签名算法
  * </p>
  * 
- * @author hubin
- * @Date 2015-01-09
+
  */
 public class SHA1 {
 

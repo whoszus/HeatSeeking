@@ -15,7 +15,6 @@
  */
 package cc.tinker.encrypt;
 
-import com.baomidou.kisso.SSOConfig;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,8 +31,7 @@ import java.util.logging.Logger;
  * MD5加密工具类
  * </p>
  * 
- * @author hubin
- * @Date 2014-5-9
+
  */
 public class MD5 {
 	private static final Logger logger = Logger.getLogger("MD5");
@@ -48,7 +46,7 @@ public class MD5 {
 	public static String toMD5(String plainText) {
 		StringBuffer rlt = new StringBuffer();
 		try {
-			rlt.append(md5String(plainText.getBytes(SSOConfig.getSSOEncoding())));
+			rlt.append(md5String(plainText.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			logger.severe(" CipherHelper toMD5 exception.");
 			e.printStackTrace();
@@ -59,9 +57,9 @@ public class MD5 {
 	/**
 	 * MD5 参数签名生成算法
 	 * 
-	 * @param HashMap<String,String>
+	 * @param params<String,String>
 	 *            params 请求参数集，所有参数必须已转换为字符串类型
-	 * @param String
+	 * @param secret
 	 *            secret 签名密钥
 	 * @return 签名
 	 * @throws IOException
@@ -79,9 +77,9 @@ public class MD5 {
 	/**
 	 * MD5 参数签名生成算法
 	 * 
-	 * @param String
+	 * @param sigstr
 	 *            sigstr 签名字符串
-	 * @param String
+	 * @param secret
 	 *            secret 签名密钥
 	 * @return 签名
 	 * @throws IOException
