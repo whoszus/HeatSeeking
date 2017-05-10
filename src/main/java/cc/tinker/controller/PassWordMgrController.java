@@ -67,9 +67,16 @@ public class PassWordMgrController {
     public JSONObject getSiteBootstrapTable(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                         @RequestParam(value = "sortType", defaultValue = "auto") String sortType,
-                                        HttpServletRequest request) {
+                                        HttpServletRequest request ,@CookieValue(value = "token", defaultValue = "empty") String token) {
+
+//        TokenEntity tokenEntity = authenticationService.isTokenValid(token);
 
         Map<String, Object> conditions = ServletUtils.getParametersStartingWith(request, "condition_");
+//        if(tokenEntity!=null){
+//            conditions.put("EQ_userId",tokenEntity.getUserId());
+//        }else{
+//            conditions.put("EQ_userId",0);
+//        }
         Page<SiteEncodePasswordEntity> entityPage = siteEncodeService.getSiteBootstrapTable(conditions, pageNumber, pageSize, sortType);
         return JSONObject.fromObject(entityPage);
     }

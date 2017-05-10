@@ -112,6 +112,8 @@ public class SiteEncodeService {
                     try {
                         String publicKey = getUserPublicKey(userId);
                         decodedPassword = decodeByPublicKey(siteEncodePasswordEntityDB.getSitePasswordEncode(), publicKey);
+                        siteEncodePasswordEntityDB.setLastDecodeTime(new Date());
+                        siteEncodePasswordEntityDB.setDecodeCount(siteEncodePasswordEntityDB.getDecodeCount()+1);
                         siteEncodeRepository.save(siteEncodePasswordEntityDB);
                     } catch (Exception e) {
                         e.printStackTrace();
