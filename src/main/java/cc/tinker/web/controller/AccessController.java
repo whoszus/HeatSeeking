@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * Created by Eagle on 2017/5/17.
+ * Created by tinker on 2017/5/17.
  */
 
 @RestController
@@ -29,7 +29,7 @@ public class AccessController {
     IpAccessService ipAccessService;
 
     @RequestMapping("accessHistory")
-    public FrontEndResponse accessHistory(){
+    public FrontEndResponse accessHistory() {
         FrontEndResponse frontEndResponse = new FrontEndResponse();
 
 
@@ -41,21 +41,14 @@ public class AccessController {
      */
     @RequestMapping("/accessHistoryList")
     @CrossOrigin
-    public JSONObject accessHistoryList(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
-                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                            @RequestParam(value = "sortType", defaultValue = "auto") String sortType,
-                                            HttpServletRequest request , @CookieValue(value = "token", defaultValue = "empty") String token) {
+    public Page<AccessHistoryEntity> accessHistoryList(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
+                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                        @RequestParam(value = "sortType", defaultValue = "auto") String sortType,
+                                        HttpServletRequest request, @CookieValue(value = "token", defaultValue = "empty") String token) {
 
         TokenEntity tokenEntity = authenticationService.isTokenValid(token);
-
         Map<String, Object> conditions = ServletUtils.getParametersStartingWith(request, "condition_");
-//        if(tokenEntity!=null){
-//            conditions.put("EQ_userId",tokenEntity.getUserId());
-//        }else{
-//            conditions.put("EQ_userId",0);
-//        }
-//        Page<SiteEncodePasswordEntity> entityPage = siteEncodeService.getSiteBootstrapTable(conditions, pageNumber, pageSize, sortType);
-        Page<AccessHistoryEntity> entityPage = ipAccessService.accessHistoryList(conditions,pageNumber,pageSize,sortType);
-        return JSONObject.fromObject(entityPage);
+        Page<AccessHistoryEntity> entityPage = ipAccessService.accessHistoryList(conditions, pageNumber, pageSize, sortType);
+        return entityPage;
     }
 }

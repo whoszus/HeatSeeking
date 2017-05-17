@@ -1,5 +1,7 @@
 package cc.tinker.web.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -49,6 +51,7 @@ public class AccessHistoryEntity {
 
     @Basic
     @Column(name = "ACCESS_DATE_TIME")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getAccessDateTime() {
         return accessDateTime;
     }
