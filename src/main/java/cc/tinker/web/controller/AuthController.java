@@ -5,6 +5,7 @@ import cc.tinker.web.entity.TokenEntity;
 import cc.tinker.web.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import cc.tinker.entry.entity.FrontEndResponse;
@@ -34,6 +35,7 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/loginWithToken.do")
+    @CrossOrigin
     public FrontEndResponse authentication(@CookieValue(value = "token", defaultValue = "empty") String token,
                                            String account, String password, HttpServletResponse response) {
         TokenEntity tokenEntity = authService.isTokenValid(token);
@@ -47,6 +49,7 @@ public class AuthController {
     }
 
     @RequestMapping("/loginWithAccount.do")
+    @CrossOrigin
     public FrontEndResponse loginWithAccount(AuthenticationEntity authenticationEntity, HttpServletResponse response) {
         AuthenticationEntity authenticationEntityDB = authService.authentication(authenticationEntity.getUserEmail(), authenticationEntity.getUserPassword());
 
@@ -70,6 +73,7 @@ public class AuthController {
      * @return
      */
     @RequestMapping("/register.do")
+    @CrossOrigin
     public FrontEndResponse register(@CookieValue(value = "token", defaultValue = "empty") String token,
                                      AuthenticationEntity auth, HttpServletResponse response, HttpServletRequest request) {
 
@@ -89,6 +93,7 @@ public class AuthController {
 
 
     @RequestMapping("/login")
+    @CrossOrigin
     public void login(AuthenticationEntity auth) {
 
     }
