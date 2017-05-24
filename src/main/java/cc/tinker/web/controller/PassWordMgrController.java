@@ -36,7 +36,7 @@ public class PassWordMgrController {
     @RequestMapping("/encryptPsw")
     @CrossOrigin
     public FrontEndResponse encryptPsw(@CookieValue(value = "token",defaultValue = "empty") String token,
-                                  SiteEncodePasswordEntity siteEncode) {
+                                  SiteEncodePasswordEntity siteEncode,HttpServletRequest request) {
         TokenEntity tokenEntity = authenticationService.isTokenValid(token);
         if(tokenEntity!=null){
             //获取用户id；
@@ -54,7 +54,7 @@ public class PassWordMgrController {
      */
     @RequestMapping("/deletePsw")
     @CrossOrigin
-    public FrontEndResponse deleteSiteEncode(SiteEncodePasswordEntity siteEncode) {
+    public FrontEndResponse deleteSiteEncode(SiteEncodePasswordEntity siteEncode,HttpServletRequest request) {
         siteEncodeService.deleteOne(siteEncode);
         return new FrontEndResponse(true);
     }
@@ -89,7 +89,7 @@ public class PassWordMgrController {
      */
     @RequestMapping("/decodePassword")
     @CrossOrigin
-    public FrontEndResponse decodePassword(@CookieValue(value = "token", defaultValue = "empty") String token, SiteEncodePasswordEntity siteEncode){
+    public FrontEndResponse decodePassword(@CookieValue(value = "token", defaultValue = "empty") String token, SiteEncodePasswordEntity siteEncode,HttpServletRequest request){
         TokenEntity tokenEntity = authenticationService.isTokenValid(token);
         if(tokenEntity!=null){
             //获取用户id；

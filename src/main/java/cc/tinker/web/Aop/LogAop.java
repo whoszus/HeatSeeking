@@ -133,13 +133,6 @@ public class LogAop {
                     }
                 }
 
-                //获取query string 或 posted form data参数
-                Map<String, String[]> paramMap = request.getParameterMap();
-                if (paramMap != null && paramMap.size() > 0) {
-                    allParams.add(paramMap);
-                }
-            } else if (arg instanceof HttpServletResponse) {
-            } else {
             }
         }
 
