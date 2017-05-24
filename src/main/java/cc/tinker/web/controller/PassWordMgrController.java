@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import cc.tinker.entry.entity.FrontEndResponse;
 import cc.tinker.entry.utils.ServletUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -68,14 +69,13 @@ public class PassWordMgrController {
                                         @RequestParam(value = "sortType", defaultValue = "auto") String sortType,
                                         HttpServletRequest request ,@CookieValue(value = "token", defaultValue = "empty") String token) {
 
-//        TokenEntity tokenEntity = authenticationService.isTokenValid(token);
-
+        TokenEntity tokenEntity = authenticationService.isTokenValid(token);
         Map<String, Object> conditions = ServletUtils.getParametersStartingWith(request, "condition_");
-//        if(tokenEntity!=null){
-//            conditions.put("EQ_userId",tokenEntity.getUserId());
-//        }else{
-//            conditions.put("EQ_userId",0);
-//        }
+        if(tokenEntity!=null){
+            conditions.put("EQ_userId",tokenEntity.getUserId());
+        }else{
+            conditions.put("EQ_userId",0);
+        }
         Page<SiteEncodePasswordEntity> entityPage = siteEncodeService.getSiteBootstrapTable(conditions, pageNumber, pageSize, sortType);
         return JSONObject.fromObject(entityPage);
     }

@@ -4,6 +4,7 @@ import cc.tinker.web.entity.AuthenticationEntity;
 import cc.tinker.web.entity.TokenEntity;
 import cc.tinker.web.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,12 +53,11 @@ public class AuthController {
     @CrossOrigin
     public FrontEndResponse loginWithAccount(AuthenticationEntity authenticationEntity, HttpServletResponse response) {
         AuthenticationEntity authenticationEntityDB = authService.authentication(authenticationEntity.getUserEmail(), authenticationEntity.getUserPassword());
-
         if (authenticationEntityDB != null) {
             String token = authService.generateNewToken(authenticationEntityDB.getId());
             Cookie responseCookie = new Cookie("token", token);
             responseCookie.setPath("/");
-            responseCookie.setMaxAge(20 * 1000 * 60);
+            responseCookie.setMaxAge(20  * 60);
             response.addCookie(responseCookie);
             response.addCookie(new Cookie("test", "test"));
             return new FrontEndResponse(true, authenticationEntityDB.getUserName());
@@ -82,20 +82,13 @@ public class AuthController {
         if ((boolean) map.get("success")) {
             Cookie responseCookie = new Cookie("token", (String) map.get("token"));
             responseCookie.setPath("/");
-            responseCookie.setMaxAge(20 * 1000 * 60);
+            responseCookie.setMaxAge(20  * 60);
             response.addCookie(responseCookie);
             AuthenticationEntity authenticationEntityDB = (AuthenticationEntity) map.get("auth");
             return new FrontEndResponse(true, authenticationEntityDB.getUserName());
         } else {
             return new FrontEndResponse(false, "Email已存在");
         }
-    }
-
-
-    @RequestMapping("/login")
-    @CrossOrigin
-    public void login(AuthenticationEntity auth) {
-
     }
 
 

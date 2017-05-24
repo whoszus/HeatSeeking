@@ -119,6 +119,9 @@ public class AuthenticationService {
      * @return
      */
     public TokenEntity isTokenValid(String token) {
+        if(token.equals("empty")){
+            return null;
+        }
         TokenEntity tokenEntity = tokenDao.findOneByToken(token, new Date());
         if (tokenEntity != null) {
             return tokenEntity;

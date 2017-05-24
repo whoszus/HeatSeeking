@@ -15,7 +15,6 @@ public class IpAccessListEntity {
     private String ipAddr;
     private int handleStatus;
     private Integer isAccessable;
-    private Date lastAccessDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,14 +57,6 @@ public class IpAccessListEntity {
         this.isAccessable = isAccessable;
     }
 
-    @Column(name = "LAST_ACCESS_DATE")
-    public Date getLastAccessDate() {
-        return lastAccessDate;
-    }
-
-    public void setLastAccessDate(Date lastAccessDate) {
-        this.lastAccessDate = lastAccessDate;
-    }
 
     @Override
     public boolean equals(Object o) {
