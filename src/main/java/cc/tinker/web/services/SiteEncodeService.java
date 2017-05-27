@@ -2,6 +2,7 @@ package cc.tinker.web.services;
 
 import cc.tinker.entry.annotation.Permission;
 import cc.tinker.entry.annotation.RsaKeyRequire;
+import cc.tinker.entry.encrypt.AESMsgCrypt;
 import cc.tinker.web.controller.AuthController;
 import cc.tinker.entry.encrypt.RSA;
 import cc.tinker.web.entity.RedswordRsaKeyEntity;
@@ -90,6 +91,11 @@ public class SiteEncodeService {
                     e.printStackTrace();
                 }
                 break;
+
+            case 2: // AES
+
+
+                break;
             default:
                 break;
         }
@@ -106,18 +112,22 @@ public class SiteEncodeService {
         String decodedPassword = null;
         SiteEncodePasswordEntity siteEncodePasswordEntityDB = siteEncodeRepository.findOne(siteEncodePasswordEntity.getId());
 
-        if (siteEncodePasswordEntityDB!=null) {
+        if (siteEncodePasswordEntityDB != null) {
             switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
                 case 1: //RSA
                     try {
                         String publicKey = getUserPublicKey(userId);
                         decodedPassword = decodeByPublicKey(siteEncodePasswordEntityDB.getSitePasswordEncode(), publicKey);
                         siteEncodePasswordEntityDB.setLastDecodeTime(new Date());
-                        siteEncodePasswordEntityDB.setDecodeCount(siteEncodePasswordEntityDB.getDecodeCount()+1);
+                        siteEncodePasswordEntityDB.setDecodeCount(siteEncodePasswordEntityDB.getDecodeCount() + 1);
                         siteEncodeRepository.save(siteEncodePasswordEntityDB);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    break;
+
+                case 2 : //AES
+//                    AESMsgCrypt
                     break;
                 default:
                     break;
@@ -182,7 +192,7 @@ public class SiteEncodeService {
         if (redswordRsaKeyEntity != null) {
             if (redswordRsaKeyEntity.getRsaPrivateKey() != "" && redswordRsaKeyEntity.getRsaPrivateKey() != null) {
                 privateKeyDB = redswordRsaKeyEntity.getRsaPrivateKey();
-                logger.info("获得私钥：" +privateKeyDB);
+                logger.info("获得私钥：" + privateKeyDB);
             }
         } else { //未生成RSA秘钥对，则生成密钥对，并存到数据库；
             redswordRsaKeyEntity = new RedswordRsaKeyEntity();
@@ -194,7 +204,7 @@ public class SiteEncodeService {
             redswordRsaKeyEntity.setKeyHolder(userId);
             redswordRsaKeyEntity.setId(0);
             privateKeyDB = privateKey;
-            logger.info("生成私钥：" +privateKeyDB);
+            logger.info("生成私钥：" + privateKeyDB);
             redSwordRsaKeyRepository.save(redswordRsaKeyEntity);
         }
 
@@ -252,13 +262,13 @@ public class SiteEncodeService {
      * @return
      */
     public String decodeByPublicKey(byte[] encodedPassword, String publicKey) {
-        System.out.println("encodedPassword      ~~~  " +encodedPassword);
-        System.out.println("publicKey    ~~~  " +publicKey);
+        System.out.println("encodedPassword      ~~~  " + encodedPassword);
+        System.out.println("publicKey    ~~~  " + publicKey);
         String decodedPassword = null;
         try {
             byte[] decodedData = RSA.decryptByPublicKey(encodedPassword, publicKey);
             decodedPassword = new String(decodedData);
-            logger.info("解密后 +" +decodedPassword);
+            logger.info("解密后 +" + decodedPassword);
         } catch (Exception e) {
             e.printStackTrace();
         }
