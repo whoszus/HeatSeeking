@@ -72,9 +72,6 @@ public class AESMsgCrypt {
 	 *             {@link AESException}
 	 */
 	public AESMsgCrypt(String token, String encodingAesKey, String appId) throws AESException {
-		if (encodingAesKey.length() != 43) {
-			throw new AESException(AESException.ERROR_ILLEGAL_AESKEY);
-		}
 
 		this.token = token;
 		this.appId = appId;

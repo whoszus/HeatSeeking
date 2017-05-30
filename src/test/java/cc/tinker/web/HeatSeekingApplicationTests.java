@@ -1,12 +1,26 @@
 package cc.tinker.web;
 
+import cc.tinker.entry.encrypt.AES;
+import cc.tinker.entry.encrypt.AESMsgCrypt;
 import cc.tinker.entry.encrypt.RSA;
+import cc.tinker.entry.encrypt.SHA1;
+import cc.tinker.entry.exception.AESException;
 import cc.tinker.entry.utils.DateTimeUtils;
+import cc.tinker.entry.utils.EncryptMsg;
+import cc.tinker.entry.utils.JSONParser;
+import cc.tinker.entry.utils.XMLParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
@@ -89,6 +103,77 @@ public class HeatSeekingApplicationTests {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+    }
+
+
+    @Test
+    public void AESTest(){
+        // 需要加密的明文
+        String encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+        String token = "pamtest";
+        String timestamp = "1409304348";
+        String nonce = "xxxxxx";
+        String appId = "wxb11529c136998cb6";
+        String replyXMLMsg = " 中文<xml><ToUserName><![CDATA[oia2TjjewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
+        String replyJSONMsg = " 中文{\"Description\":\"testCallBackReplyVideo\",\"MediaId\":\"eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0\",\"CreateTime\":\"1407743423\",\"Title\":\"testCallBackReplyVideo\",\"ToUserName\":\"oia2TjjewbmiOUlr6X-1crbLOvLw\",\"FromUserName\":\"gh_7f083739789a\",\"MsgType\":\"video\"}";
+
+        AESMsgCrypt pc = null;
+        try {
+            pc = new AESMsgCrypt(token, encodingAesKey, appId);
+
+            // 解密JSON消息
+            String jsonEncrypt = pc.encryptJSONMsg(replyJSONMsg, timestamp, nonce);
+            System.out.println("\n JSON 加密后: " + jsonEncrypt);
+            EncryptMsg jsonEncryptMsg = JSONParser.extract(jsonEncrypt);
+            String resultJson = pc.decryptMsg(jsonEncryptMsg.getMsgSignature(), timestamp, nonce,
+                    jsonEncryptMsg.getEncrypt());
+            System.out.println("\n JSON 解密后明文: " + resultJson);
+
+            // 解密XML消息
+            String xmlEncrypt = pc.encryptXMLMsg(replyXMLMsg, timestamp, nonce);
+            System.out.println("\n XML 加密后: " + xmlEncrypt);
+            EncryptMsg xmlEncryptMsg = XMLParser.extract(xmlEncrypt);
+            String resultXml = pc.decryptMsg(xmlEncryptMsg.getMsgSignature(), timestamp, nonce, xmlEncryptMsg.getEncrypt());
+            System.out.println("\n XML 解密后明文: " + resultXml);
+
+            // URL地址验证
+            String echoStr = pc.encrypt("测试URL地址签名test-url");
+            String signature = SHA1.getSHA1(token, timestamp, nonce, echoStr);
+            System.out.println("\n URL 参数加密后：" + echoStr);
+            String resultEchoStr = pc.verifyUrl(signature, timestamp, nonce, echoStr);
+            System.out.println("\n URL 参数解密后明文: " + resultEchoStr);
+        } catch (AESException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @Test
+    public void AESToolsTest(){
+        String string = null;
+        try {
+            string = AES.aesEncryptString("IAmThePlainText", "16BytesLengthKey");
+            System.out.println(string);
+            System.out.println(AES.aesDecryptString(string, "16BytesLengthKey"));
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
 
 
     }

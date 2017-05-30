@@ -2,6 +2,7 @@ package cc.tinker.web.services;
 
 import cc.tinker.entry.annotation.Permission;
 import cc.tinker.entry.annotation.RsaKeyRequire;
+import cc.tinker.entry.encrypt.AES;
 import cc.tinker.entry.encrypt.AESMsgCrypt;
 import cc.tinker.web.controller.AuthController;
 import cc.tinker.entry.encrypt.RSA;
@@ -19,6 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import cc.tinker.entry.repository.SearchFilter;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
@@ -93,6 +100,18 @@ public class SiteEncodeService {
                 break;
 
             case 2: // AES
+                try {
+                    String AesEncodePassword = AES.aesEncryptString(siteEncodePasswordEntity.getPassword(), "16BytesLengthKey");
+                    siteEncodePasswordEntity.setSitePasswordEncode(AesEncodePassword.getBytes());
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setUserId(userId);
+                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
                 break;
@@ -127,7 +146,15 @@ public class SiteEncodeService {
                     break;
 
                 case 2 : //AES
-//                    AESMsgCrypt
+                    try {
+                        String sitePassEncoded = new String(siteEncodePasswordEntityDB.getSitePasswordEncode());
+                        decodedPassword = AES.aesDecryptString(sitePassEncoded,"16BytesLengthKey");
+                        siteEncodePasswordEntityDB.setLastDecodeTime(new Date());
+                        siteEncodePasswordEntityDB.setDecodeCount(siteEncodePasswordEntityDB.getDecodeCount() + 1);
+                        siteEncodeRepository.save(siteEncodePasswordEntityDB);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     break;
