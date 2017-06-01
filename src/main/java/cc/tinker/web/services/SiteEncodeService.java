@@ -29,6 +29,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -80,20 +81,25 @@ public class SiteEncodeService {
      * 根据加密方式加密用户密码并保存到数据库
      */
     public void encodeAndSaveData(SiteEncodePasswordEntity siteEncodePasswordEntity, Integer userId) {
-        switch (siteEncodePasswordEntity.getSiteEncodeMethod()) {
+        int encodeMethod = siteEncodePasswordEntity.getSiteEncodeMethod();
+        if (encodeMethod == 0) {
+            encodeMethod = new Random().nextInt(1) + 1;
+        }
+
+        switch (encodeMethod) {
+
             case 1: //RSA
                 try {
+                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
                     String privateKey = getUserPrivateKey(userId);
-
-                    siteEncodePasswordEntity.setSiteEncodeMethod(1);
                     byte[] encodePasswordString = encodePasswordByPrivateKey(siteEncodePasswordEntity.getPassword(), privateKey);
-                    siteEncodePasswordEntity.setSitePasswordEncode(encodePasswordString);
-                    siteEncodePasswordEntity.setDecodeCount(0);
-                    siteEncodePasswordEntity.setUserId(userId);
-                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
-                    siteEncodePasswordEntity.setDecodeCount(0);
-                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
-                    siteEncodeRepository.save(siteEncodePasswordEntity);
+                    siteEncodePasswordEntityToDB.setSitePasswordEncode(encodePasswordString);
+                    siteEncodePasswordEntityToDB.setDecodeCount(0);
+                    siteEncodePasswordEntityToDB.setUserId(userId);
+                    siteEncodePasswordEntityToDB.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntityToDB.setDecodeCount(0);
+                    siteEncodePasswordEntityToDB.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntityToDB);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,14 +107,15 @@ public class SiteEncodeService {
 
             case 2: // AES
                 try {
+                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
                     String AesEncodePassword = AES.aesEncryptString(siteEncodePasswordEntity.getPassword(), "16BytesLengthKey");
-                    siteEncodePasswordEntity.setSitePasswordEncode(AesEncodePassword.getBytes());
-                    siteEncodePasswordEntity.setDecodeCount(0);
-                    siteEncodePasswordEntity.setUserId(userId);
-                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
-                    siteEncodePasswordEntity.setDecodeCount(0);
-                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
-                    siteEncodeRepository.save(siteEncodePasswordEntity);
+                    siteEncodePasswordEntityToDB.setSitePasswordEncode(AesEncodePassword.getBytes());
+                    siteEncodePasswordEntityToDB.setDecodeCount(0);
+                    siteEncodePasswordEntityToDB.setUserId(userId);
+                    siteEncodePasswordEntityToDB.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntityToDB.setDecodeCount(0);
+                    siteEncodePasswordEntityToDB.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntityToDB);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -145,10 +152,10 @@ public class SiteEncodeService {
                     }
                     break;
 
-                case 2 : //AES
+                case 2: //AES
                     try {
                         String sitePassEncoded = new String(siteEncodePasswordEntityDB.getSitePasswordEncode());
-                        decodedPassword = AES.aesDecryptString(sitePassEncoded,"16BytesLengthKey");
+                        decodedPassword = AES.aesDecryptString(sitePassEncoded, "16BytesLengthKey");
                         siteEncodePasswordEntityDB.setLastDecodeTime(new Date());
                         siteEncodePasswordEntityDB.setDecodeCount(siteEncodePasswordEntityDB.getDecodeCount() + 1);
                         siteEncodeRepository.save(siteEncodePasswordEntityDB);
