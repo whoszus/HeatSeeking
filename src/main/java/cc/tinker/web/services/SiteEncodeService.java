@@ -68,10 +68,9 @@ public class SiteEncodeService {
     /**
      * 删除
      *
-     * @param siteEncodePassword
      */
-    public void deleteOne(SiteEncodePasswordEntity siteEncodePassword) {
-        siteEncodeRepository.delete(siteEncodePassword.getId());
+    public void deleteOne(int id) {
+        siteEncodeRepository.delete(id);
         //后面改为标志为删除，并不在数据库里面删除掉
 //        siteEncodePassword.set
     }
