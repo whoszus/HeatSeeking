@@ -1,7 +1,6 @@
 package cc.tinker.tasks;
 
-import cc.tinker.entity.JzCaseDetailEntity;
-import cc.tinker.entity.JzCaseInfoEntity;
+import cc.tinker.entity.*;
 import cc.tinker.service.JZSyncService;
 import cc.tinker.utils.DateTimeUtils;
 import org.slf4j.Logger;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 
 /**
@@ -24,10 +24,27 @@ public class AutoSyncJzTask {
     @Autowired
     JZSyncService jzSyncService;
 
+
+    /**
+     * 第一次启动
+     */
+    @PostConstruct
+    public void initData(){
+        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+        logger.info("启动同步服务，同步全年警综数据...........");
+
+        String dateString = "2017-01-01";
+        syncInfoWorker(dateString);
+        syncDetailWorker(dateString);
+        syncJzCaseCriminal(dateString);
+        syncJzCasePerson(dateString);
+        syncJzPersonCase(dateString);
+    }
+
     /**
      * 30分钟同步一次2天；
      */
-    @Scheduled(cron = "0 0/30 * * * ? ")
+    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*30)
     public void syncJzCaseInfoDay() {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("30分钟同步最近两天警综数据任务，开始同步警综数据");
@@ -35,6 +52,9 @@ public class AutoSyncJzTask {
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
         syncDetailWorker(dateString);
+        syncJzCaseCriminal(dateString);
+        syncJzCasePerson(dateString);
+        syncJzPersonCase(dateString);
     }
 
     /**
@@ -82,5 +102,22 @@ public class AutoSyncJzTask {
 
     }
 
+    private void syncJzCasePerson(String dateString){
+        logger.warn("开始同步警综数据 省警综-案事件-报案/受害/当事/其人  从：" + dateString +"开始");
+        JzCasePersonEntity jzCasePersonEntity = new JzCasePersonEntity();
+        jzSyncService.syncSuspects(jzCasePersonEntity, "1011100002", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
+    }
+
+    private void syncJzPersonCase(String dateString){
+        logger.warn("开始同步警综数据 省警综-案事件-人员涉案情况 从：" + dateString +"开始");
+        JzPersonCaseEntity jzPersonCaseEntity = new JzPersonCaseEntity();
+        jzSyncService.syncSuspects(jzPersonCaseEntity, "1011100020", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
+    }
+
+    private void syncJzCaseCriminal(String dateString){
+        logger.warn("开始同步警综数据 省警综-案事件-犯罪嫌人 从：" + dateString +"开始");
+        JzCaseCriminalEntity jzCaseCriminalEntity = new JzCaseCriminalEntity();
+        jzSyncService.syncSuspects(jzCaseCriminalEntity, "1011100042", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
+    }
 
 }
