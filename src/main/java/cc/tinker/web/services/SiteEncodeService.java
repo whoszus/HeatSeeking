@@ -106,15 +106,15 @@ public class SiteEncodeService {
 
             case 2: // AES
                 try {
-                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
+//                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
                     String AesEncodePassword = AES.aesEncryptString(siteEncodePasswordEntity.getPassword(), "16BytesLengthKey");
-                    siteEncodePasswordEntityToDB.setSitePasswordEncode(AesEncodePassword.getBytes());
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setUserId(userId);
-                    siteEncodePasswordEntityToDB.setLastDecodeIp("0.0.0.0");
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setLastDecodeTime(new Date());
-                    siteEncodeRepository.save(siteEncodePasswordEntityToDB);
+                    siteEncodePasswordEntity.setSitePasswordEncode(AesEncodePassword.getBytes());
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setUserId(userId);
+                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntity);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
