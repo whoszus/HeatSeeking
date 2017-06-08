@@ -54,8 +54,8 @@ public class PassWordMgrController {
      */
     @RequestMapping("/deletePsw")
     @CrossOrigin
-    public FrontEndResponse deleteSiteEncode(SiteEncodePasswordEntity siteEncode,HttpServletRequest request) {
-        siteEncodeService.deleteOne(siteEncode);
+    public FrontEndResponse deleteSiteEncode(int id,HttpServletRequest request) {
+        siteEncodeService.deleteOne(id);
         return new FrontEndResponse(true);
     }
 

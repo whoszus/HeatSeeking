@@ -68,10 +68,9 @@ public class SiteEncodeService {
     /**
      * 删除
      *
-     * @param siteEncodePassword
      */
-    public void deleteOne(SiteEncodePasswordEntity siteEncodePassword) {
-        siteEncodeRepository.delete(siteEncodePassword);
+    public void deleteOne(int id) {
+        siteEncodeRepository.delete(id);
         //后面改为标志为删除，并不在数据库里面删除掉
 //        siteEncodePassword.set
     }
@@ -90,16 +89,16 @@ public class SiteEncodeService {
 
             case 1: //RSA
                 try {
-                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
+//                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
                     String privateKey = getUserPrivateKey(userId);
                     byte[] encodePasswordString = encodePasswordByPrivateKey(siteEncodePasswordEntity.getPassword(), privateKey);
-                    siteEncodePasswordEntityToDB.setSitePasswordEncode(encodePasswordString);
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setUserId(userId);
-                    siteEncodePasswordEntityToDB.setLastDecodeIp("0.0.0.0");
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setLastDecodeTime(new Date());
-                    siteEncodeRepository.save(siteEncodePasswordEntityToDB);
+                    siteEncodePasswordEntity.setSitePasswordEncode(encodePasswordString);
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setUserId(userId);
+                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntity);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -107,15 +106,15 @@ public class SiteEncodeService {
 
             case 2: // AES
                 try {
-                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
+//                    SiteEncodePasswordEntity siteEncodePasswordEntityToDB = new SiteEncodePasswordEntity();
                     String AesEncodePassword = AES.aesEncryptString(siteEncodePasswordEntity.getPassword(), "16BytesLengthKey");
-                    siteEncodePasswordEntityToDB.setSitePasswordEncode(AesEncodePassword.getBytes());
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setUserId(userId);
-                    siteEncodePasswordEntityToDB.setLastDecodeIp("0.0.0.0");
-                    siteEncodePasswordEntityToDB.setDecodeCount(0);
-                    siteEncodePasswordEntityToDB.setLastDecodeTime(new Date());
-                    siteEncodeRepository.save(siteEncodePasswordEntityToDB);
+                    siteEncodePasswordEntity.setSitePasswordEncode(AesEncodePassword.getBytes());
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setUserId(userId);
+                    siteEncodePasswordEntity.setLastDecodeIp("0.0.0.0");
+                    siteEncodePasswordEntity.setDecodeCount(0);
+                    siteEncodePasswordEntity.setLastDecodeTime(new Date());
+                    siteEncodeRepository.save(siteEncodePasswordEntity);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
