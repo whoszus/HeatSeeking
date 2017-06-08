@@ -12,7 +12,7 @@
 - [ ] spring 服务注册发现；
 - [ ] sprigng boot 远程调用；
 - [ ] 将token验证作为全局服务，验证之后调用其他springboot的服务
-- [ ] 写文档管理action；
+- [ ] 使用Swagger2 管理API
 
 
 ### 系统当前状态分析

@@ -5,6 +5,7 @@ import cc.tinker.web.entity.AccessHistoryEntity;
 import cc.tinker.web.entity.TokenEntity;
 import cc.tinker.web.services.AuthenticationService;
 import cc.tinker.web.services.IpAccessService;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class AccessController {
     @Autowired
     IpAccessService ipAccessService;
 
+    @ApiOperation(value="获取访问历史", notes="")
     @RequestMapping("accessHistory")
     public FrontEndResponse accessHistory() {
         FrontEndResponse frontEndResponse = new FrontEndResponse();
