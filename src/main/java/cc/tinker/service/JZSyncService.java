@@ -34,8 +34,8 @@ public class JZSyncService {
      * 同步警综嫌疑人
      */
     @SuppressWarnings("unchecked")
-    public <X> void syncSuspects(X x, String tableCode, String[] fileds, String condition) {
-
+    public <X> List<X> syncSuspects(X x, String tableCode, String[] fileds, String condition) {
+        List<X> caseLists = null;
         long startTime = System.currentTimeMillis();
         DataDownLoadFactory dataDownLoadFactory = DataDownLoadFactory.getInstance();
 
@@ -154,6 +154,14 @@ public class JZSyncService {
                         }
                         if (x instanceof JzCaseDetailEntity) {
                             jzService.saveCaseDetailList((List<JzCaseDetailEntity>) caseList);
+                            Iterator var3 = caseList.iterator();
+
+                            while(var3.hasNext()) {
+                                JzCaseDetailEntity entity = (JzCaseDetailEntity) var3.next();
+                                logger.info("从警综同步过来的警综系统编号: " +entity.getAjbh() + "案件编号" + entity.getSystemid());
+
+                            }
+
                         } else if (x instanceof JzCaseInfoEntity) {
                             jzService.saveCaseInfoList((List<JzCaseInfoEntity>) caseList);
                         } else if (x instanceof JzDictionaryEntity) {
@@ -166,6 +174,8 @@ public class JZSyncService {
                             jzService.savePersonCaseList((List<JzPersonCaseEntity>) caseList);
                         }
                         logger.info("从警综获取得" + list.size()+"条数据！");
+                        caseLists = caseList;
+                        caseList = null;
                     }
                 }
             }
@@ -173,6 +183,8 @@ public class JZSyncService {
         dataDownLoadFactory.closeSession();
         logger.info("总查询时间" + (System.currentTimeMillis() - startTime));
         logger.warn("同步结束，当前时间"+ DateTimeUtils.convertDateToStringByFormat(new Date()));
+
+        return caseLists;
     }
 
 }

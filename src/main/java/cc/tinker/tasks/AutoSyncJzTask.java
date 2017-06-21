@@ -24,23 +24,40 @@ public class AutoSyncJzTask {
     @Autowired
     JZSyncService jzSyncService;
 
-
+//
+//    /**
+//     * 第一次启动
+//     */
+//    @PostConstruct
+//    public void initData(){
+//        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+//        logger.info("启动同步服务，同步全年警综数据...........");
+//
+//        String dateString = "2017-01-01";
+//        syncInfoWorker(dateString);
+//        syncDetailWorker(dateString);
+//        syncJzCaseCriminal(dateString);
+//        syncJzCasePerson(dateString);
+//        syncJzPersonCase(dateString);
+//    }
+//
     /**
      * 第一次启动
      */
     @PostConstruct
     public void initData(){
-        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-        logger.info("启动同步服务，同步全年警综数据...........");
 
-        String dateString = "2017-01-01";
-        syncInfoWorker(dateString);
+        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -1);
+        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncDetailWorker(dateString);
+        syncInfoWorker(dateString);
         syncJzCaseCriminal(dateString);
         syncJzCasePerson(dateString);
         syncJzPersonCase(dateString);
-    }
 
+    }
     /**
      * 30分钟同步一次2天；
      */
@@ -58,7 +75,7 @@ public class AutoSyncJzTask {
     }
 
     /**
-     * 每天一点同步三天
+     * 每天一点同步15天
      */
     @Scheduled(cron = "1 1 1 * * ? ")
     public void syncJzCaseInfoWeek() {
@@ -66,7 +83,7 @@ public class AutoSyncJzTask {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("每天1:1:1 同步最近 7 天警综数据任务，开始同步警综数据");
 
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -7);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -15);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
         syncDetailWorker(dateString);
@@ -82,7 +99,7 @@ public class AutoSyncJzTask {
         logger.warn("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.warn("每三天的 2:2:2 同步 30 天警综数据任务，开始同步警综数据");
 
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -30);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -60);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
         syncDetailWorker(dateString);
