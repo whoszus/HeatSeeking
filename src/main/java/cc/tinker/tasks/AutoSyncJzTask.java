@@ -49,7 +49,7 @@ public class AutoSyncJzTask {
 
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
 
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -1);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -15);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncDetailWorker(dateString);
         syncInfoWorker(dateString);
@@ -59,13 +59,13 @@ public class AutoSyncJzTask {
 
     }
     /**
-     * 30分钟同步一次2天；
+     * 30分钟同步一次15天；
      */
     @Scheduled(initialDelay =300000, fixedDelay = 1000*60*30)
     public void syncJzCaseInfoDay() {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("30分钟同步最近两天警综数据任务，开始同步警综数据");
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -2);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -15);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
         syncDetailWorker(dateString);
@@ -75,7 +75,21 @@ public class AutoSyncJzTask {
     }
 
     /**
-     * 每天一点同步15天
+     * 5分钟同步一次2天；
+     */
+    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*5)
+    public void syncJzCaseInfoMin() {
+        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+        logger.info("5分钟同步最近两天警综数据任务，开始同步警综数据");
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -2);
+        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
+        syncDetailWorker(dateString);
+
+    }
+
+
+    /**
+     * 每天一点同步30天
      */
     @Scheduled(cron = "1 1 1 * * ? ")
     public void syncJzCaseInfoWeek() {
@@ -83,7 +97,7 @@ public class AutoSyncJzTask {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("每天1:1:1 同步最近 7 天警综数据任务，开始同步警综数据");
 
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -15);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -30);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
         syncDetailWorker(dateString);
@@ -91,7 +105,7 @@ public class AutoSyncJzTask {
 
 
     /**
-     * 每2天同步一个月
+     * 每2天同步2个月
      */
     @Scheduled(cron = "2 2 2 1/3 * ?")
     public void syncJzCaseInfoTenDay() {

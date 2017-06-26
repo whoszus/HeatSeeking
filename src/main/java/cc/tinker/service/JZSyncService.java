@@ -54,7 +54,7 @@ public class JZSyncService {
                         }
                     } else {//案件数据解析
                         Object kp = resultstr[0];
-                        logger.info(kp.toString());
+//                        logger.info(kp.toString());
                         LinkedHashMap linkedHashMap = (LinkedHashMap) resultstr[0];
                         Iterator iterator = linkedHashMap.entrySet().iterator();
                         String[] strings = new String[286];
@@ -154,14 +154,11 @@ public class JZSyncService {
                         }
                         if (x instanceof JzCaseDetailEntity) {
                             jzService.saveCaseDetailList((List<JzCaseDetailEntity>) caseList);
-                            Iterator var3 = caseList.iterator();
-
-                            while(var3.hasNext()) {
-                                JzCaseDetailEntity entity = (JzCaseDetailEntity) var3.next();
-                                logger.info("从警综同步过来的警综系统编号: " +entity.getAjbh() + "案件编号" + entity.getSystemid());
-
-                            }
-
+//                            Iterator var3 = caseList.iterator();
+//                            while(var3.hasNext()) {
+//                                JzCaseDetailEntity entity = (JzCaseDetailEntity) var3.next();
+//                                logger.info("从警综同步过来的警综系统编号: " +entity.getAjbh() + " 案件编号: " + entity.getSystemid());
+//                            }
                         } else if (x instanceof JzCaseInfoEntity) {
                             jzService.saveCaseInfoList((List<JzCaseInfoEntity>) caseList);
                         } else if (x instanceof JzDictionaryEntity) {

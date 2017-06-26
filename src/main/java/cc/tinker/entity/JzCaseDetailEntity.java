@@ -298,6 +298,8 @@ public class JzCaseDetailEntity implements Serializable {
     private Integer rownum;
 //    private Integer id;
 
+    private Integer  handleStatus;
+
 
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
@@ -310,7 +312,17 @@ public class JzCaseDetailEntity implements Serializable {
 //        this.id = id;
 //    }
 
-//    @Column(name = "ROWNUM")
+
+    @Column(name = "HANDLE_STATUS")
+    public Integer getHandleStatus() {
+        return handleStatus;
+    }
+
+    public void setHandleStatus(Integer handleStatus) {
+        this.handleStatus = handleStatus;
+    }
+
+    //    @Column(name = "ROWNUM")
     @Transient
     public Integer getRownum() {
         return rownum;
