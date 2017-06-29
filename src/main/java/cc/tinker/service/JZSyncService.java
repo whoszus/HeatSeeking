@@ -6,6 +6,7 @@ import cc.tinker.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,18 +17,21 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Service
 public class JZSyncService {
 
     private static final Logger logger = LoggerFactory.getLogger(JZSyncService.class);
 
-    private static String senderId = "A749B5BC-9148-48D3-8FE0-F2CD4AF62CCE";
+    @Value("${jzSyncParam.senderId}")
+    private  String senderId ;
     //    private static String senderId = "E058ADAE-7E07-4398-93BE-FC8931DD31A4";
-    private static String methodName = "Query_DownloadData";
-    private static String ip = "68.32.96.52";
-    private static String port = "8212";
-    private static int totalCount = -1;
+    @Value("${jzSyncParam.methodName}")
+    private  String methodName;
+    @Value("${jzSyncParam.ip}")
+    private  String ip;
+    @Value("${jzSyncParam.port}")
+    private  String port ;
+    private int totalCount =-1 ;
     @Autowired
     JZCaseService jzService;
     /**
@@ -35,13 +39,15 @@ public class JZSyncService {
      */
     @SuppressWarnings("unchecked")
     public <X> List<X> syncSuspects(X x, String tableCode, String[] fileds, String condition) {
+        int waitTime = 0;
+        logger.info("开始同步"+ip);
         List<X> caseLists = null;
         long startTime = System.currentTimeMillis();
         DataDownLoadFactory dataDownLoadFactory = DataDownLoadFactory.getInstance();
 
-        String result = dataDownLoadFactory.getFromRemote
-                (ip, port, methodName, tableCode, senderId, condition, fileds, totalCount, 0);
-        if ("success".equals(result)) {
+        try {
+            String result = dataDownLoadFactory.getFromRemote(ip, port, methodName, tableCode, senderId, condition, fileds, totalCount, 0);
+            if ("success".equals(result)) {
             if (dataDownLoadFactory.getResultQueue() != null || !dataDownLoadFactory.isClose()) {
                 //当返回队列不为空或者链接未关闭继续等待接收数据
                 while (!dataDownLoadFactory.getResultQueue().isEmpty() || !dataDownLoadFactory.isClose()) {
@@ -49,10 +55,14 @@ public class JZSyncService {
                     if (resultstr == null) {
                         try {
                             Thread.sleep(2000);
+                            waitTime+=2;
+                            logger.info("等待返回中...."+waitTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     } else {//案件数据解析
+                        logger.info("本次同步等待警综数据返回时间：" + waitTime);
+                        waitTime = 0;
                         Object kp = resultstr[0];
 //                        logger.info(kp.toString());
                         LinkedHashMap linkedHashMap = (LinkedHashMap) resultstr[0];
@@ -177,9 +187,13 @@ public class JZSyncService {
                 }
             }
         }
-        dataDownLoadFactory.closeSession();
-        logger.info("总查询时间" + (System.currentTimeMillis() - startTime));
-        logger.warn("同步结束，当前时间"+ DateTimeUtils.convertDateToStringByFormat(new Date()));
+            dataDownLoadFactory.closeSession();
+            logger.info("总查询时间" + (System.currentTimeMillis() - startTime));
+            logger.warn("同步结束，当前时间"+ DateTimeUtils.convertDateToStringByFormat(new Date()));
+        }catch (Exception e){
+            logger.error("连不上当前ip" + this.ip);
+            e.printStackTrace();
+        }
 
         return caseLists;
     }

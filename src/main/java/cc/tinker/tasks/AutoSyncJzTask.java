@@ -6,6 +6,7 @@ import cc.tinker.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +63,7 @@ public class AutoSyncJzTask {
      * 30分钟同步一次15天；
      */
     @Scheduled(initialDelay =300000, fixedDelay = 1000*60*30)
+    @Async
     public void syncJzCaseInfoDay() {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("30分钟同步最近两天警综数据任务，开始同步警综数据");
@@ -78,6 +80,7 @@ public class AutoSyncJzTask {
      * 5分钟同步一次2天；
      */
     @Scheduled(initialDelay =300000, fixedDelay = 1000*60*5)
+    @Async
     public void syncJzCaseInfoMin() {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("5分钟同步最近两天警综数据任务，开始同步警综数据");
@@ -91,6 +94,7 @@ public class AutoSyncJzTask {
     /**
      * 每天一点同步30天
      */
+    @Async
     @Scheduled(cron = "1 1 1 * * ? ")
     public void syncJzCaseInfoWeek() {
 
@@ -107,6 +111,7 @@ public class AutoSyncJzTask {
     /**
      * 每2天同步2个月
      */
+    @Async
     @Scheduled(cron = "2 2 2 1/3 * ?")
     public void syncJzCaseInfoTenDay() {
 
@@ -120,12 +125,14 @@ public class AutoSyncJzTask {
     }
 
 
+    @Async
     private void syncInfoWorker(String dateString) {
         JzCaseInfoEntity jzCaseInfoEntity = new JzCaseInfoEntity();
         logger.warn("开始同步警综数据 警情 从：" + dateString +"开始");
         jzSyncService.syncSuspects(jzCaseInfoEntity, "1011100012", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
+    @Async
     private void syncDetailWorker(String dateString) {
         logger.warn("开始同步警综数据 案情 从：" + dateString +"开始");
         JzCaseDetailEntity jzCaseDetailEntity = new JzCaseDetailEntity();
@@ -133,18 +140,21 @@ public class AutoSyncJzTask {
 
     }
 
+    @Async
     private void syncJzCasePerson(String dateString){
         logger.warn("开始同步警综数据 省警综-案事件-报案/受害/当事/其人  从：" + dateString +"开始");
         JzCasePersonEntity jzCasePersonEntity = new JzCasePersonEntity();
         jzSyncService.syncSuspects(jzCasePersonEntity, "1011100002", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
+    @Async
     private void syncJzPersonCase(String dateString){
         logger.warn("开始同步警综数据 省警综-案事件-人员涉案情况 从：" + dateString +"开始");
         JzPersonCaseEntity jzPersonCaseEntity = new JzPersonCaseEntity();
         jzSyncService.syncSuspects(jzPersonCaseEntity, "1011100020", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
+    @Async
     private void syncJzCaseCriminal(String dateString){
         logger.warn("开始同步警综数据 省警综-案事件-犯罪嫌人 从：" + dateString +"开始");
         JzCaseCriminalEntity jzCaseCriminalEntity = new JzCaseCriminalEntity();
