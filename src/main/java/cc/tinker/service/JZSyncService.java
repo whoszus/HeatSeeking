@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,9 +39,11 @@ public class JZSyncService {
      * 同步警综嫌疑人
      */
     @SuppressWarnings("unchecked")
+    @Async
     public <X> List<X> syncSuspects(X x, String tableCode, String[] fileds, String condition) {
         int waitTime = 0;
-        logger.info("开始同步"+ip);
+
+        logger.info(Thread.currentThread().getName()+ "开始同步"+ip);
         List<X> caseLists = null;
         long startTime = System.currentTimeMillis();
         DataDownLoadFactory dataDownLoadFactory = DataDownLoadFactory.getInstance();
@@ -54,14 +57,14 @@ public class JZSyncService {
                     Object[] resultstr = dataDownLoadFactory.getResultQueue().poll();
                     if (resultstr == null) {
                         try {
-                            Thread.sleep(2000);
+                            Thread.currentThread().sleep(2000);
                             waitTime+=2;
-                            logger.info("等待返回中...."+waitTime);
+                            logger.info(Thread.currentThread().getName()+ "等待返回中...."+waitTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     } else {//案件数据解析
-                        logger.info("本次同步等待警综数据返回时间：" + waitTime);
+                        logger.info(Thread.currentThread().getName()+"本次同步等待警综数据返回时间：" + waitTime);
                         waitTime = 0;
                         Object kp = resultstr[0];
 //                        logger.info(kp.toString());
@@ -124,7 +127,7 @@ public class JZSyncService {
                                                     } else if (entry.getValue() instanceof Long) {
                                                         method.invoke(newInstance, Integer.valueOf(((Long) entry.getValue()).intValue()));
                                                     } else {
-                                                        logger.error("找不到对应类型映射 " + strings[i]);
+                                                        logger.error(Thread.currentThread().getName()+"找不到对应类型映射 " + strings[i]);
                                                     }
                                                     break;
                                                 case "class java.util.Date":
@@ -180,7 +183,7 @@ public class JZSyncService {
                         } else if (x instanceof JzPersonCaseEntity) {
                             jzService.savePersonCaseList((List<JzPersonCaseEntity>) caseList);
                         }
-                        logger.info("从警综获取得" + list.size()+"条数据！");
+                        logger.info(Thread.currentThread().getName()+"从警综获取得" + list.size()+"条数据！");
                         caseLists = caseList;
                         caseList = null;
                     }
@@ -188,11 +191,12 @@ public class JZSyncService {
             }
         }
             dataDownLoadFactory.closeSession();
-            logger.info("总查询时间" + (System.currentTimeMillis() - startTime));
-            logger.warn("同步结束，当前时间"+ DateTimeUtils.convertDateToStringByFormat(new Date()));
+            logger.info(Thread.currentThread().getName()+"总查询时间" + (System.currentTimeMillis() - startTime));
+            logger.warn(Thread.currentThread().getName()+"同步结束，当前时间"+ DateTimeUtils.convertDateToStringByFormat(new Date()));
         }catch (Exception e){
-            logger.error("连不上当前ip" + this.ip);
-            e.printStackTrace();
+            logger.error(Thread.currentThread().getName()+"连不上当前ip" + this.ip);
+            logger.error(Thread.currentThread().getName()+"Exception : " + e);
+            logger.error(Thread.currentThread().getName()+"getStackTrace" + e.getMessage(),e);
         }
 
         return caseLists;

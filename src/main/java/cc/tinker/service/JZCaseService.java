@@ -51,7 +51,12 @@ public class JZCaseService {
             }
         }
         logger.info("本次同步出现重复案件编号,重复次数 + "+count);
-        jzCaseDetailEntityRepository.save(jzCaseDetailEntityList);
+        Iterable<JzCaseDetailEntity> jzCaseDetailEntityIterable =  jzCaseDetailEntityRepository.save(jzCaseDetailEntityList);
+        for (JzCaseDetailEntity entity : jzCaseDetailEntityIterable) {
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(entity.getAjbh());
+            stringBuffer.append(",");
+        }
     }
 
     /**
