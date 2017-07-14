@@ -94,19 +94,6 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
-<<<<<<< fdb1181355c6a4858c123e39266b3557eb1e1fac
-		<!--<dependency>-->
-			<!--<groupId>org.codehaus.jackson</groupId>-->
-			<!--<artifactId>jackson-mapper-asl</artifactId>-->
-			<!--<version>1.9.13</version>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>com.fasterxml.jackson.core</groupId>-->
-			<!--<artifactId>jackson-core</artifactId>-->
-			<!--<version>${jackson.core.version}</version>-->
-		<!--</dependency>-->
-=======
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
@@ -123,7 +110,6 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.9</version>
 		</dependency>
->>>>>>> handover
 		<!--<dependency>-->
 			<!--<groupId>com.fasterxml.jackson.core</groupId>-->
 			<!--<artifactId>jackson-databind</artifactId>-->
