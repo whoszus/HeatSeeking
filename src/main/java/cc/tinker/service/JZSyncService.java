@@ -32,14 +32,13 @@ public class JZSyncService {
     private  String ip;
     @Value("${jzSyncParam.port}")
     private  String port ;
-    private int totalCount =-1 ;
     @Autowired
-    JZCaseService jzService;
+    private  JZCaseService jzService;
     /**
      * 同步警综嫌疑人
      */
     @SuppressWarnings("unchecked")
-    @Async
+    @Async("tinkerJzSyncThread")
     public <X> List<X> syncSuspects(X x, String tableCode, String[] fileds, String condition) {
         int waitTime = 0;
 
@@ -49,6 +48,7 @@ public class JZSyncService {
         DataDownLoadFactory dataDownLoadFactory = DataDownLoadFactory.getInstance();
 
         try {
+            int totalCount = -1;
             String result = dataDownLoadFactory.getFromRemote(ip, port, methodName, tableCode, senderId, condition, fileds, totalCount, 0);
             if ("success".equals(result)) {
             if (dataDownLoadFactory.getResultQueue() != null || !dataDownLoadFactory.isClose()) {
@@ -56,18 +56,18 @@ public class JZSyncService {
                 while (!dataDownLoadFactory.getResultQueue().isEmpty() || !dataDownLoadFactory.isClose()) {
                     Object[] resultstr = dataDownLoadFactory.getResultQueue().poll();
                     if (resultstr == null) {
-                        try {
-                            Thread.currentThread().sleep(2000);
-                            waitTime+=2;
-                            logger.info(Thread.currentThread().getName()+ "等待返回中...."+waitTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        Thread.currentThread();
+                        Thread.sleep(15000);
+                        waitTime+=15;
+                        if(waitTime>1000){
+                            dataDownLoadFactory.closeSession();
+                            logger.info(Thread.currentThread().getName()+ "等待超时，结束同步任务..."+waitTime);
+                            return null;
                         }
+                        logger.info(Thread.currentThread().getName()+ "等待返回中...."+waitTime);
                     } else {//案件数据解析
                         logger.info(Thread.currentThread().getName()+"本次同步等待警综数据返回时间：" + waitTime);
                         waitTime = 0;
-                        Object kp = resultstr[0];
-//                        logger.info(kp.toString());
                         LinkedHashMap linkedHashMap = (LinkedHashMap) resultstr[0];
                         Iterator iterator = linkedHashMap.entrySet().iterator();
                         String[] strings = new String[286];
@@ -89,7 +89,6 @@ public class JZSyncService {
                             }
                             list.add(map);
                         }
-                        int k = 0;
                         List<X> caseList = new ArrayList<>();
                         for (Map map : list) {
                             try {
@@ -109,10 +108,10 @@ public class JZSyncService {
                                     String fieldName = nameCopy.replaceFirst(nameCopy.substring(0, 1), nameCopy.substring(0, 1).toLowerCase());
 
                                     if (entry.getValue() != null) {
-                                        String type = null;
+                                        String type ;
                                         try {
                                             type = newInstance.getClass().getDeclaredField(fieldName).getGenericType().toString();
-                                            Method method = null;
+                                            Method method ;
                                             switch (type) {
                                                 case "class java.lang.String":
                                                     method = newInstance.getClass().getMethod("set" + name, String.class);
@@ -123,9 +122,9 @@ public class JZSyncService {
                                                     if (entry.getValue() instanceof Integer) {
                                                         method.invoke(newInstance, entry.getValue());
                                                     } else if (entry.getValue() instanceof BigDecimal) {
-                                                        method.invoke(newInstance, Integer.valueOf(((BigDecimal) entry.getValue()).intValue()));
+                                                        method.invoke(newInstance, ((BigDecimal) entry.getValue()).intValue());
                                                     } else if (entry.getValue() instanceof Long) {
-                                                        method.invoke(newInstance, Integer.valueOf(((Long) entry.getValue()).intValue()));
+                                                        method.invoke(newInstance, ((Long) entry.getValue()).intValue());
                                                     } else {
                                                         logger.error(Thread.currentThread().getName()+"找不到对应类型映射 " + strings[i]);
                                                     }
@@ -137,7 +136,7 @@ public class JZSyncService {
                                                 case "class java.lang.Double":
                                                     method = newInstance.getClass().getMethod("set" + name, Double.class);
                                                     if (entry.getValue() instanceof BigDecimal) {
-                                                        method.invoke(newInstance, Double.valueOf(((BigDecimal) entry.getValue()).doubleValue()));
+                                                        method.invoke(newInstance, ((BigDecimal) entry.getValue()).doubleValue());
                                                     } else {
                                                         method.invoke(newInstance, entry.getValue());
                                                     }
@@ -148,30 +147,23 @@ public class JZSyncService {
                                                     break;
                                             }
                                             caseList.add((X) newInstance);
-                                        } catch (NoSuchFieldException e) {
-                                            e.printStackTrace();
-                                        } catch (NoSuchMethodException e) {
-                                            e.printStackTrace();
-                                        } catch (IllegalAccessException e) {
-                                            e.printStackTrace();
-                                        } catch (InvocationTargetException e) {
+                                        } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 }
-                            } catch (InstantiationException e) {
+                            } catch (InstantiationException | IllegalAccessException e) {
                                 e.printStackTrace();
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
+                                logger.error(Thread.currentThread().getName()+"getStackTrace" + e.getMessage(),e);
+                                logger.error("此处异常！！！");
+                                StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+                                for(StackTraceElement stackTrace: stackTraceElements){
+                                    logger.debug(stackTrace.getClassName()+ "  "+ stackTrace.getMethodName()+" "+stackTrace.getLineNumber());
+                                }
                             }
                         }
                         if (x instanceof JzCaseDetailEntity) {
                             jzService.saveCaseDetailList((List<JzCaseDetailEntity>) caseList);
-//                            Iterator var3 = caseList.iterator();
-//                            while(var3.hasNext()) {
-//                                JzCaseDetailEntity entity = (JzCaseDetailEntity) var3.next();
-//                                logger.info("从警综同步过来的警综系统编号: " +entity.getAjbh() + " 案件编号: " + entity.getSystemid());
-//                            }
                         } else if (x instanceof JzCaseInfoEntity) {
                             jzService.saveCaseInfoList((List<JzCaseInfoEntity>) caseList);
                         } else if (x instanceof JzDictionaryEntity) {
@@ -197,8 +189,14 @@ public class JZSyncService {
             logger.error(Thread.currentThread().getName()+"连不上当前ip" + this.ip);
             logger.error(Thread.currentThread().getName()+"Exception : " + e);
             logger.error(Thread.currentThread().getName()+"getStackTrace" + e.getMessage(),e);
+            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+            for(StackTraceElement stackTrace: stackTraceElements){
+                logger.debug(stackTrace.getClassName()+ "  "+ stackTrace.getMethodName()+" "+stackTrace.getLineNumber());
+            }
+        }finally {
+            dataDownLoadFactory.closeSession();
+            logger.info(Thread.currentThread().getName() +DateTimeUtils.convertDateToStringByFormat(new Date()) + "结束session" );
         }
-
         return caseLists;
     }
 

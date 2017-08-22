@@ -23,117 +23,113 @@ public class AutoSyncJzTask {
     private static final Logger logger = LoggerFactory.getLogger(JZSyncService.class);
 
     @Autowired
-    JZSyncService jzSyncService;
+    private JZSyncService jzSyncService;
 
-//
-//    /**
-//     * 第一次启动
-//     */
-//    @PostConstruct
-//    public void initData(){
-//        logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-//        logger.info("启动同步服务，同步全年警综数据...........");
-//
-//        String dateString = "2017-01-01";
-//        syncInfoWorker(dateString);
-//        syncDetailWorker(dateString);
-//        syncJzCaseCriminal(dateString);
-//        syncJzCasePerson(dateString);
-//        syncJzPersonCase(dateString);
-//    }
-//
     /**
      * 第一次启动
      */
     @PostConstruct
+    @Async("tinkerJzSyncThread")
     public void initData(){
-
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -15);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -7);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncDetailWorker(dateString);
-        syncInfoWorker(dateString);
-        syncJzCaseCriminal(dateString);
-        syncJzCasePerson(dateString);
-        syncJzPersonCase(dateString);
-
     }
     /**
-     * 30分钟同步一次10天；
+     * 60分钟同步一次3天；
      */
-    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*30)
-    @Async
+    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*60)
+    @Async("tinkerJzSyncThread")
     public void syncJzCaseInfoDay() {
         logger.info("当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
         logger.info("30分钟同步最近两天警综数据任务，开始同步警综数据");
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -10);
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -2);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
-        syncInfoWorker(dateString);
         syncDetailWorker(dateString);
+    }
+
+    /**
+     * 10分钟同步一次当天；
+     */
+    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*10)
+    @Async("tinkerJzSyncThread")
+    public void syncJzCaseInfoMin() {
+        logger.info(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+        logger.info(Thread.currentThread().getName()+"5分钟同步最近两天警综数据任务，开始同步警综数据");
+        Date date = new Date();
+        logger.info("当前线程数"+Thread.activeCount());
+        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
+        syncDetailWorker(dateString);
+    }
+
+
+
+
+    /**
+     * 每天3点同步3天人员
+     */
+    @Async("tinkerJzSyncThread")
+    @Scheduled(cron = "* * 3 * * * ")
+    public void syncJzCasePerson() {
+        logger.info(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -2);
+        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncJzCaseCriminal(dateString);
         syncJzCasePerson(dateString);
         syncJzPersonCase(dateString);
     }
 
-    /**
-     * 5分钟同步一次2天；
-     */
-    @Scheduled(initialDelay =300000, fixedDelay = 1000*60*15)
-    @Async
-    public void syncJzCaseInfoMin() {
-        logger.info(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-        logger.info(Thread.currentThread().getName()+"5分钟同步最近两天警综数据任务，开始同步警综数据");
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -2);
-        logger.info("当前线程数"+Thread.activeCount());
-        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
-        syncDetailWorker(dateString);
-
-    }
+//    /**
+//     * 每天一点同步15天
+//     */
+//    @Async("tinkerJzSyncThread")
+//    @Scheduled(cron = "1 1 1 * * ? ")
+//    public void syncJzCaseInfoWeek() {
+//        logger.info(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
+//        logger.info(Thread.currentThread().getName()+"每天1:1:1 同步最近 7 天警综数据任务，开始同步警综数据");
+//        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -10);
+//        String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
+//        syncDetailWorker(dateString);
+//    }
 
 
     /**
-     * 每天一点同步30天
+     * 每天6点同步10天 警情
      */
-    @Async
-    @Scheduled(cron = "1 1 1 * * ? ")
-    public void syncJzCaseInfoWeek() {
-
+    @Async("tinkerJzSyncThread")
+    @Scheduled(cron = "* * 6 * * ? ")
+    public void syncJzCaseInfo() {
         logger.info(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-        logger.info(Thread.currentThread().getName()+"每天1:1:1 同步最近 7 天警综数据任务，开始同步警综数据");
-
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -30);
+        logger.info(Thread.currentThread().getName()+"每天1:1:1 同步最近 2 天警综数据任务，开始同步警综数据");
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -1);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
         syncInfoWorker(dateString);
-        syncDetailWorker(dateString);
     }
 
 
     /**
-     * 每2天同步2个月
+     * 每周六 凌晨同步20天
      */
-    @Async
-    @Scheduled(cron = "2 2 2 1/3 * ?")
+    @Async("tinkerJzSyncThread")
+    @Scheduled(cron = "1 1 0 * * 6 ")
     public void syncJzCaseInfoTenDay() {
-
         logger.warn(Thread.currentThread().getName()+"当前时间：" + DateTimeUtils.convertDateToStringByFormat(new Date()));
-        logger.warn(Thread.currentThread().getName()+"每三天的 2:2:2 同步 30 天警综数据任务，开始同步警综数据");
-
-        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -60);
+        logger.warn(Thread.currentThread().getName()+"同步 20 天警综数据任务，开始同步警综数据");
+        Date date = DateTimeUtils.getDateByByDaysInt(new Date(), -20);
         String dateString = DateTimeUtils.convertDateToStringByFormat(date, "yyyy-MM-dd");
-        syncInfoWorker(dateString);
         syncDetailWorker(dateString);
     }
 
 
-    @Async
+    @Async("tinkerJzSyncThread")
     private void syncInfoWorker(String dateString) {
         JzCaseInfoEntity jzCaseInfoEntity = new JzCaseInfoEntity();
         logger.warn(Thread.currentThread().getName()+"开始同步警综数据 警情 从：" + dateString +"开始");
         jzSyncService.syncSuspects(jzCaseInfoEntity, "1011100012", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
-    @Async
+    @Async("tinkerJzSyncThread")
     private void syncDetailWorker(String dateString) {
         logger.warn(Thread.currentThread().getName()+"开始同步警综数据 案情 从：" + dateString +"开始");
         JzCaseDetailEntity jzCaseDetailEntity = new JzCaseDetailEntity();
@@ -141,21 +137,21 @@ public class AutoSyncJzTask {
 
     }
 
-    @Async
+    @Async("tinkerJzSyncThread")
     private void syncJzCasePerson(String dateString){
         logger.warn(Thread.currentThread().getName()+"开始同步警综数据 省警综-案事件-报案/受害/当事/其人  从：" + dateString +"开始");
         JzCasePersonEntity jzCasePersonEntity = new JzCasePersonEntity();
         jzSyncService.syncSuspects(jzCasePersonEntity, "1011100002", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
-    @Async
+    @Async("tinkerJzSyncThread")
     private void syncJzPersonCase(String dateString){
         logger.warn(Thread.currentThread().getName()+"开始同步警综数据 省警综-案事件-人员涉案情况 从：" + dateString +"开始");
         JzPersonCaseEntity jzPersonCaseEntity = new JzPersonCaseEntity();
         jzSyncService.syncSuspects(jzPersonCaseEntity, "1011100020", new String[]{"*"}, "CREATEDTIME > to_date('" + dateString + "','yyyy-MM-dd')");
     }
 
-    @Async
+    @Async("tinkerJzSyncThread")
     private void syncJzCaseCriminal(String dateString){
         logger.warn(Thread.currentThread().getName()+"开始同步警综数据 省警综-案事件-犯罪嫌人 从：" + dateString +"开始");
         JzCaseCriminalEntity jzCaseCriminalEntity = new JzCaseCriminalEntity();
